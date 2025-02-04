@@ -18,6 +18,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
     private String name;
+    private String surname;
     @Column(unique = true, nullable = false)
     private String email;
     private String password;

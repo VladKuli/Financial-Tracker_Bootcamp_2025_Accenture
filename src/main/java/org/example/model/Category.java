@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "expenses")
+@Table(name = "categories")
 @Entity
 public class Category {
     @Id
