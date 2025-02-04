@@ -1,8 +1,8 @@
-package org.example.service;
+package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.User;
-import org.example.repository.UserRepository;
+import org.financialTracker.model.User;
+import org.financialTracker.repository.JpaUserRepository;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
 
     public List<User> getUsers() {
         return userRepository.findAll();

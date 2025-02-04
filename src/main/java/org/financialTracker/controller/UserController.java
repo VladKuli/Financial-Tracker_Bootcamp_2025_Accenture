@@ -1,10 +1,8 @@
-package org.example.controller;
+package org.financialTracker.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.model.User;
-import org.example.repository.UserRepository;
-import org.example.service.UserService;
-import org.springframework.stereotype.Controller;
+import org.financialTracker.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

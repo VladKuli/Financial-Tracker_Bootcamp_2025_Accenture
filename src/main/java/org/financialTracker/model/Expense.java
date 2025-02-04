@@ -1,4 +1,4 @@
-package org.example.model;
+package org.financialTracker.model;
 
 import jakarta.persistence.*;
 import lombok.*;
