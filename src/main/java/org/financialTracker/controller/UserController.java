@@ -1,8 +1,11 @@
 package org.financialTracker.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.model.User;
+import org.financialTracker.dto.UserDTO;
+import org.financialTracker.model.User;
 import org.financialTracker.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,17 +17,17 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserDTO> getUsers() {
         return userService.getUsers();
     }
 
     @GetMapping(path = "{id}")
-    public User getUser(@PathVariable("id") long id) {
+    public UserDTO getUser(@PathVariable("id") long id) {
         return userService.getUser(id);
     }
 
     @PostMapping
-    public void createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody User user) {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setName(user.getName());
@@ -34,6 +37,8 @@ public class UserController {
         newUser.setRole(user.getRole());
 
         userService.createUser(newUser);
+
+        return new ResponseEntity<>("User created", HttpStatus.CREATED);
     }
 
 }
