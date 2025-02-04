@@ -40,6 +40,6 @@
 ### 🔹 DevOps & Deployment  
 - **Docker + Docker Compose** – Containerized deployment.  
 - **GitHub Actions / Jenkins** – CI/CD automation.  
-- **AWS / DigitalOcean / Render** – Cloud hosting.  
+- **AWS** – Cloud hosting.  
 
 ---
