@@ -16,3 +16,8 @@ spring:
 server:
   error:
     include-message: always
+
+openai:
+  api:
+    key: ${OPENAI_KEY}
+    url: ${OPENAI_URL}
