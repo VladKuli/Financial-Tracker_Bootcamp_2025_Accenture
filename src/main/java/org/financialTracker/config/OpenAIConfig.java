@@ -10,11 +10,13 @@ public class OpenAIConfig {
 
     @Value("${openai.api.key}")
     private String openAiApiKey;
+    @Value("${openai.api.url}")
+    private String openAiApiUrl;
 
     @Bean
     public WebClient config() {
         return WebClient.builder()
-                .baseUrl("https://api.openai.com/v1/chat/completions")
+                .baseUrl(openAiApiUrl)
                 .defaultHeader("Authorization", "Bearer " + openAiApiKey)
                 .defaultHeader("Content-Type", "application/json")
                 .build();
