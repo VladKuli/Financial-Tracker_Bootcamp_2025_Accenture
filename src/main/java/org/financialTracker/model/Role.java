@@ -1,4 +1,4 @@
-package org.example.model;
+package org.financialTracker.model;
 
 public enum Role {
     USER,

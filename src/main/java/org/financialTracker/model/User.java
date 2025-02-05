@@ -22,7 +22,7 @@ public class User {
     private String email;
     private String password;
     // USER/ADMIN
-    private String role = "USER";
+    private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses;
 }

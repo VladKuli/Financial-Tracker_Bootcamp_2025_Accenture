@@ -29,7 +29,7 @@ public class UserMapper {
                 user.getUsername(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole(),
+                user.getRole().toString(),
                 expenseDTOs
         );
     }
