@@ -8,6 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+
+//This class represents the request that the user sends to retrieve the JWT token.
 public class JwtRequest {
 
     @NotBlank(message = "Username is required")
