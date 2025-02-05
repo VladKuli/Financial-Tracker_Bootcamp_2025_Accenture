@@ -24,7 +24,7 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     // GET endpoint to retrieve all expenses
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ExpenseDTO>> getAllExpenses(
             @RequestParam(required = false) BigDecimal amount,  // Optional filter by amount
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,  // Optional filter by date
