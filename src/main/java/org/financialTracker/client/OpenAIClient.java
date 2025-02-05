@@ -1,5 +1,7 @@
 package org.financialTracker.client;
 
+import org.financialTracker.response.OpenAIResponse;
+import org.financialTracker.util.FinancialPromptConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,12 +20,12 @@ public class OpenAIClient {
 
     public String getResponseFromOpenAI(String prompt) {
         Map<String, Object> requestBody = Map.of(
-                "model", "gpt-4",
+                "model", FinancialPromptConstants.MODEL_NAME,
                 "messages", new Object[]{
-                        Map.of("role", "system", "content", "You are a financial advisor."),
+                        Map.of("role", "system", "content", FinancialPromptConstants.SYSTEM_ROLE),
                         Map.of("role", "user", "content", prompt)
                 },
-                "max_tokens", 100
+                "max_tokens", FinancialPromptConstants.MAX_TOKENS
         );
 
         try {
@@ -37,7 +39,7 @@ public class OpenAIClient {
             return jsonResponse.get("choices").get(0).get("message").get("content").asText();
 
         } catch (Exception e) {
-            return "Error getting financial advice: " + e.getMessage();
+            return new OpenAIResponse("Error getting financial advice: " + e).getMessage();
         }
     }
 }
