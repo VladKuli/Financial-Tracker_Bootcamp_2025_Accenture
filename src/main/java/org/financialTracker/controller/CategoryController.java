@@ -68,7 +68,7 @@ public class CategoryController {
 //  }
 
     // PUT endpoint to update an existing category (using /update and /{id})
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @RequestBody Category category) {
         Category updatedCategory = categoryService.updateCategory(id, category);
         CategoryDTO categoryDTO = categoryMapper.toDTO(updatedCategory);
@@ -83,7 +83,7 @@ public class CategoryController {
 //    }
 
     // DELETE endpoint to delete a category (using /delete and /{id})
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok("Category deleted successfully");

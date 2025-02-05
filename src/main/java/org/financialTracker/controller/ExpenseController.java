@@ -70,7 +70,7 @@ public class ExpenseController {
  //   }
 
     // PUT endpoint to update an existing expense (using /update and /{id})
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ExpenseDTO> updateExpense(@PathVariable Long id, @RequestBody Expense expense) {
         // Update the expense using the provided ID and expense object
         Expense updatedExpense = expenseService.updateExpense(id, expense);
@@ -85,7 +85,7 @@ public class ExpenseController {
 //    }
 
     // DELETE endpoint to delete an expense (using /delete and /{id})
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.ok("Expense deleted successfully");
