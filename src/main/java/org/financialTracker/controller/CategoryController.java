@@ -1,10 +1,10 @@
 package org.financialTracker.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.CategoryDTO;
 import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.model.Category;
 import org.financialTracker.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +20,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    // Injects the CategoryService into the controller to interact with the business logic layer.
-    @Autowired
-    private CategoryService categoryService;
+    // CategoryService is responsible for handling the business logic related to category operations.
+    // It is injected via constructor to interact with the underlying data layer (e.g., database).
+    private final CategoryService categoryService;
 
-    // Injects the CategoryMapper into the controller to convert between the Category entity and CategoryDTO.
-    @Autowired
-    private CategoryMapper categoryMapper;
+    // CategoryMapper is used to convert between Category entities and CategoryDTOs.
+    // It helps in mapping the data that is returned from the service layer to a suitable response format (DTO).
+    private final CategoryMapper categoryMapper;
 
     // POST endpoint to create a new category
     @PostMapping("/add")

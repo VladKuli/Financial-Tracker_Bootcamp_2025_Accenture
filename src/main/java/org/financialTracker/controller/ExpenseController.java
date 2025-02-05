@@ -4,7 +4,7 @@ import org.financialTracker.dto.ExpenseDTO;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
 import org.financialTracker.service.ExpenseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +22,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/expenses")
+@RequiredArgsConstructor
 public class ExpenseController {
 
     // Injects the ExpenseService into the controller to interact with the business logic layer.
-    @Autowired
-    private ExpenseService expenseService;
+    // It is injected via constructor to interact with the underlying data layer (e.g., database).
+    private final ExpenseService expenseService;
 
     // Injects the ExpenseMapper into the controller to convert between Expense entity and ExpenseDTO.
-    @Autowired
-    private ExpenseMapper expenseMapper;
+    // It helps in mapping the data that is returned from the service layer to a suitable response format (DTO).
+    private final ExpenseMapper expenseMapper;
 
     // POST endpoint to create/add a new expense
     @PostMapping("/add")
