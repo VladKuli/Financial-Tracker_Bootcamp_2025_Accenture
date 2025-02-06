@@ -1,16 +1,18 @@
 package org.financialTracker.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.financialTracker.model.Category;
+
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpenseDTO {
-    private Long id;
+public class ExpenseCreateDTO {
+    @NotNull
     private BigDecimal amount;
-    private String date;
     private String description;
-    private String category;
+    private Category category;
 }

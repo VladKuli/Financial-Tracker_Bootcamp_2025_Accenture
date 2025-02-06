@@ -1,6 +1,7 @@
 package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.financialTracker.dto.UserDTO;
 import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.UserMapper;
@@ -9,6 +10,7 @@ import org.financialTracker.repository.JpaUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,17 @@ public class UserService {
         return UserMapper.toDTO(
                 userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"))
         );
+    }
+
+    public User getCurrentUser(Authentication authentication) {
+        String username = "coolUser";
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
+        return optionalUser.orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    // TEST
+    public User getCurrentUser(String username) {
+        return userRepository.findByUsername(username);
     }
 
     // Create user

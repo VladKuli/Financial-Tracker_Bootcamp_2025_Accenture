@@ -19,7 +19,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // GET endpoint to retrieve all categories
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<CategoryDTO>> getAllCategories(
         @RequestParam(required = false) String title) {   // Optional filter by category title
         return ResponseEntity.ok(categoryService.getCategoriesByFilter(title));

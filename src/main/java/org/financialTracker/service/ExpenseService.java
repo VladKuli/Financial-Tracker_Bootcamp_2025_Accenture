@@ -1,10 +1,12 @@
 package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.financialTracker.dto.ExpenseCreateDTO;
 import org.financialTracker.dto.ExpenseDTO;
 import org.financialTracker.exception.ExpenseNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
+import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaExpenseRepository;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -23,6 +25,11 @@ public class ExpenseService {
         return ExpenseMapper.toDTOList(expenses);
     }
 
+    public List<ExpenseDTO> findExpensesByUser(User currentUser, BigDecimal amount, LocalDate date, String categoryTitle) {
+        List<Expense> expense = jpaExpenseRepository.findExpenseByUser(currentUser);
+        return ExpenseMapper.toDTOList(expense);
+    }
+
     public ExpenseDTO getExpenseById(Long id) {
         Expense expense = jpaExpenseRepository.findById(id).orElseThrow(
                 () -> new ExpenseNotFoundException("Expense with id: '" + id + "' not found")
@@ -30,8 +37,15 @@ public class ExpenseService {
         return ExpenseMapper.toDTO(expense);
     }
 
-    public ExpenseDTO createExpense(Expense expense) {
+    public ExpenseDTO createExpense(User currentUser, ExpenseCreateDTO expenseCreateDTO) {
+        Expense expense = new Expense();
+
+        expense.setAmount(expenseCreateDTO.getAmount());
+        expense.setDescription(expenseCreateDTO.getDescription());
+        expense.setCategory(expenseCreateDTO.getCategory());
+        expense.setUser(currentUser);
         jpaExpenseRepository.save(expense);
+
         return ExpenseMapper.toDTO(expense);
     }
 

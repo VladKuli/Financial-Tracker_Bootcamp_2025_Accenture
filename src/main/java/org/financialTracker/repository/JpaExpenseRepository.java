@@ -1,6 +1,7 @@
 package org.financialTracker.repository;
 
 import org.financialTracker.model.Expense;
+import org.financialTracker.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface JpaExpenseRepository extends JpaRepository<Expense, Long> {
+
+    List<Expense> findExpenseByUser(User user);
+
     @Query("SELECT e FROM Expense e JOIN e.category c " +
             "WHERE (:amount IS NULL OR e.amount = :amount) " +
             "AND (:date IS NULL OR e.date = :date) " +
