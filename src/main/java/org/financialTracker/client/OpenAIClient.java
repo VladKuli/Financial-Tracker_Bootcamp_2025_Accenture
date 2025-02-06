@@ -39,7 +39,7 @@ public class OpenAIClient {
             return jsonResponse.get("choices").get(0).get("message").get("content").asText();
 
         } catch (Exception e) {
-            return new OpenAIResponse("Error getting financial advice: " + e).getMessage();
+            return "Error getting financial advice: " + e.getMessage();
         }
     }
 }
