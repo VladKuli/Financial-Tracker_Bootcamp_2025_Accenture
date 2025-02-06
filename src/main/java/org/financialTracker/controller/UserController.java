@@ -2,15 +2,10 @@ package org.financialTracker.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.UserDTO;
-import org.financialTracker.mapper.ExpenseMapper;
-import org.financialTracker.mapper.UserMapper;
-import org.financialTracker.model.Expense;
 import org.financialTracker.model.User;
 import org.financialTracker.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -38,6 +33,12 @@ public class UserController {
     @PutMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("Deleted user with id " + id);
     }
 
 }

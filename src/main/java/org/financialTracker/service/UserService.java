@@ -3,21 +3,12 @@ package org.financialTracker.service;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.UserDTO;
 import org.financialTracker.exception.UserNotFoundException;
-import org.financialTracker.mapper.CategoryMapper;
-import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.mapper.UserMapper;
-import org.financialTracker.model.Category;
-import org.financialTracker.model.Expense;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
-import org.financialTracker.response.CoreError;
-import org.financialTracker.response.UserResponse;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,5 +50,12 @@ public class UserService {
         userRepository.save(updatedUser);
 
         return UserMapper.toDTO(updatedUser);
+    }
+
+    public void deleteUser(Long id) {
+        if (!jpaUserRepository.existsById(id)) {
+            throw new UserNotFoundException("User with id '" + id + "' not found");
+        }
+        jpaUserRepository.deleteById(id);
     }
 }

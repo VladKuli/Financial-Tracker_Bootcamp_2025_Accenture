@@ -7,7 +7,6 @@ import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.model.Category;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 
