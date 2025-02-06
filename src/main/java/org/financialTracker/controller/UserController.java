@@ -3,6 +3,7 @@ package org.financialTracker.controller;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.UserDTO;
 import org.financialTracker.mapper.ExpenseMapper;
+import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.Expense;
 import org.financialTracker.model.User;
 import org.financialTracker.service.UserService;
@@ -30,15 +31,15 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        String message = userService.createUser(user);
-        return new ResponseEntity<>(message, HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
+        UserDTO createdUserDTO = UserMapper.toDTO(userService.createUser(user));
+        return ResponseEntity.ok(createdUserDTO);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
-        User updatedUser = userService.updateUser(id, userDTO);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
+        UserDTO updatedUserDTO = UserMapper.toDTO(userService.updateUser(id, user));
+        return ResponseEntity.ok(updatedUserDTO);
     }
 
 }

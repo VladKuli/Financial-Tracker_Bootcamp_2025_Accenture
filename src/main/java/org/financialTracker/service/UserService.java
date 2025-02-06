@@ -37,22 +37,21 @@ public class UserService {
     }
 
     // Create user
-    public String createUser(User user) {
-        userRepository.save(user);
-        return new UserResponse("User created successfully").getMessage();
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     // Update user
-    public User updateUser(Long id, UserDTO userDTO) {
+    public User updateUser(Long id, User user) {
         User updatedUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        updatedUser.setUsername(userDTO.getUsername()); // Assign passed body values
-        updatedUser.setName(userDTO.getName());
-        updatedUser.setSurname(userDTO.getSurname());
-        updatedUser.setEmail(userDTO.getEmail());
-        updatedUser.setPassword(userDTO.getPassword());
-        updatedUser.setRole(userDTO.getRole());
+        updatedUser.setUsername(user.getUsername()); // Assign passed body values
+        updatedUser.setName(user.getName());
+        updatedUser.setSurname(user.getSurname());
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setPassword(user.getPassword());
+        updatedUser.setRole(user.getRole());
 
         return userRepository.save(updatedUser);
     }

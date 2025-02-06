@@ -28,6 +28,7 @@ public class UserMapper {
                 user.getId(),
                 user.getUsername(),
                 user.getName(),
+                user.getSurname(),
                 user.getEmail(),
                 user.getRole(),
                 expenseDTOs
