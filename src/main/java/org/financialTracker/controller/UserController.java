@@ -30,18 +30,15 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
-        UserDTO userDTO = userService.createUser(user);
-        return ResponseEntity.ok(userDTO);
+    public ResponseEntity<String> createUser(@RequestBody User user) {
+        String message = userService.createUser(user);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
-        UserDTO updatedUserDTO = userService.updateUser(id, user);
-        if (updatedUserDTO != null) {
-            return ResponseEntity.ok(updatedUserDTO);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        User updatedUser = userService.updateUser(id, userDTO);
+        return ResponseEntity.ok(message);
     }
 
 }

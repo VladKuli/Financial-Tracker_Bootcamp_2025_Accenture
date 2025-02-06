@@ -17,9 +17,9 @@ public class OpenAIService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenAIService.class);
 
     @Autowired
-    private  OpenAIClient openAIClient;
+    private OpenAIClient openAIClient;
     @Autowired
-    private  JpaExpenseRepository repository;
+    private JpaExpenseRepository repository;
 
     public String generateFinancialAdvice(String category, double amount) {
         if (!isValidInput(category, amount)) {

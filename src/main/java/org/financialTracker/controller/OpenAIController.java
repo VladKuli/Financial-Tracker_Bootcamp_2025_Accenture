@@ -15,7 +15,6 @@ public class OpenAIController {
     @Autowired
     private  OpenAIService aiService;
 
-
     @PostMapping("/analyze")
     public ResponseEntity<String> analyzeExpense(@RequestParam String category, @RequestParam double amount) {
         String advice = aiService.generateFinancialAdvice(category, amount);

@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public abstract class CoreResponse extends CoreError{
+public abstract class CoreResponse extends CoreError {
 
     private List<CoreError> errorList = new ArrayList<>();
 
