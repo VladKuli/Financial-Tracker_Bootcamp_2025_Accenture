@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://database-1.c3ua8sgk2lc4.us-east-1.rds.amazonaws.com:5432/base
-    username: postgres
-    password: admin123
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -19,5 +19,5 @@ server:
 
 openai:
   api:
-    key: key
-    url: https://api.openai.com/v1/chat/completions
+    key: ${OPENAI_KEY}
+    url: ${OPENAI_URL}
