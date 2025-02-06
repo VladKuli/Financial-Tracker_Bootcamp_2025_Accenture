@@ -14,6 +14,7 @@ import org.financialTracker.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,19 +40,19 @@ public class AuthService {
             throw new AuthException("Password does not meet security requirements");
         }
 
-        return userService.saveUser(user); // Now using UserService for saving user
+        return userService.saveUser(user);
     }
 
     /**
-     * Authenticate user and generate tokens (without password verification)
+     * Authenticate user and generate tokens
      */
     public JwtResponse login(@NonNull JwtRequest authRequest) throws AuthException {
-        // Retrieve user from the database
-        User user = userService.getByUsername(authRequest.getUsername())
+
+        UserDetails userDetails = userService.getByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new AuthException("User not found"));
 
         // Check if the password matches the hashed password in the database
-        if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(authRequest.getPassword(), userDetails.getPassword())) {
             throw new AuthException("Invalid password");
         }
 
@@ -60,15 +61,12 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
-        // Get authenticated User
-        user = (User) authentication.getPrincipal();
-
         // Generate JWT tokens
-        String accessToken = jwtTokenProvider.generateAccessToken(user);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
 
         // Store refresh token
-        refreshStorage.put(user.getUsername(), refreshToken);
+        refreshStorage.put(userDetails.getUsername(), refreshToken);
 
         // Return JWT response (UserDTO is not included for security reasons)
         return new JwtResponse(accessToken, refreshToken);
@@ -85,7 +83,7 @@ public class AuthService {
 
         // Extract claims from the refresh token
         Claims claims = jwtTokenProvider.getRefreshClaims(refreshToken);
-        String username = claims.getSubject();
+        String username = claims.get("username", String.class);
 
         // Check if the refresh token exists in storage
         String storedRefreshToken = refreshStorage.get(username);
@@ -115,7 +113,7 @@ public class AuthService {
 
         // Extract username from the refresh token claims
         Claims claims = jwtTokenProvider.getRefreshClaims(refreshToken);
-        String username = claims.getSubject();
+        String username = claims.get("username", String.class);
 
         // Ensure the refresh token exists and matches the stored token
         String storedRefreshToken = refreshStorage.get(username);
@@ -148,22 +146,24 @@ public class AuthService {
     /**
      * Obtaining information about an authenticated user
      */
-    public UserDTO getAuthenticatedUser() throws AuthException{
+    public UserDTO getAuthenticatedUser() throws AuthException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof User) {
-            return UserMapper.toDTO((User) principal);
-        }
-        throw new AuthException("Error when retrieving a user");
+
+        return userService.getByUsername(principal.toString())
+                .map(UserMapper::toDTO)
+                .orElseThrow(() -> new AuthException("User not found"));
+
     }
+
 
     /**
      * Checking password complexity
      */
     private boolean isValidPassword(String password) {
         return password.length() >= 8 &&
-                password.matches(".*[A-Z].*") &&  // Хотя бы одна заглавная буква
-                password.matches(".*[a-z].*") &&  // Хотя бы одна строчная буква
-                password.matches(".*\\d.*") &&    // Хотя бы одна цифра
-                password.matches(".*[@#$%^&+=!].*"); // Хотя бы один спецсимвол
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[@#$%^&+=!].*");
     }
 }
