@@ -30,39 +30,32 @@ public class ExpenseController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,  // Optional filter by date
             @RequestParam(required = false) String categoryTitle) {  // Optional filter by category
         // Get filtered expenses based on request parameters
-        List<ExpenseDTO> expensesDTO = expenseService.getExpensesByFilter(amount, date, categoryTitle);
-        return ResponseEntity.ok(expensesDTO);
+        return ResponseEntity.ok(expenseService.getExpensesByFilter(amount, date, categoryTitle));
     }
 
     // GET endpoint to retrieve a specific expense by its ID
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable Long id) {
-        ExpenseDTO expenseDTO = expenseService.getExpenseById(id);
-        return ResponseEntity.ok(expenseDTO);
+        return ResponseEntity.ok(expenseService.getExpenseById(id));
     }
 
     // POST endpoint to create/add a new expense
     @PostMapping("/add")
     public ResponseEntity<ExpenseDTO> createExpense(@RequestBody Expense expense) {
-        ExpenseDTO expenseDTO = expenseService.createExpense(expense);
-        return ResponseEntity.ok(expenseDTO);
+        return ResponseEntity.ok(expenseService.createExpense(expense));
     }
 
     // PUT endpoint to update an existing expense (using /update and /{id})
     @PutMapping("/update/{id}")
     public ResponseEntity<ExpenseDTO> updateExpense(@PathVariable Long id, @RequestBody Expense expense) {
-        ExpenseDTO updatedExpenseDTO = expenseService.updateExpense(id, expense);
-        if (updatedExpenseDTO != null) {
-            return ResponseEntity.ok(updatedExpenseDTO);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(expenseService.updateExpense(id, expense));
     }
 
     // DELETE endpoint to delete an expense (using /delete and /{id})
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
-        return ResponseEntity.ok("Expense deleted successfully");
+        return ResponseEntity.ok("Deleted expense with id " + id);
     }
 
 }

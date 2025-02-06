@@ -32,14 +32,12 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
-        UserDTO createdUserDTO = UserMapper.toDTO(userService.createUser(user));
-        return ResponseEntity.ok(createdUserDTO);
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
-        UserDTO updatedUserDTO = UserMapper.toDTO(userService.updateUser(id, user));
-        return ResponseEntity.ok(updatedUserDTO);
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
 }

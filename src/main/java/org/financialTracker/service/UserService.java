@@ -3,8 +3,10 @@ package org.financialTracker.service;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.UserDTO;
 import org.financialTracker.exception.UserNotFoundException;
+import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.mapper.UserMapper;
+import org.financialTracker.model.Category;
 import org.financialTracker.model.Expense;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final JpaUserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     // Get all users
     public List<UserDTO> getUsers() {
@@ -37,12 +40,13 @@ public class UserService {
     }
 
     // Create user
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDTO createUser(User user) {
+        User savedUser = jpaUserRepository.save(user);
+        return UserMapper.toDTO(savedUser);
     }
 
     // Update user
-    public User updateUser(Long id, User user) {
+    public UserDTO updateUser(Long id, User user) {
         User updatedUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -52,7 +56,8 @@ public class UserService {
         updatedUser.setEmail(user.getEmail());
         updatedUser.setPassword(user.getPassword());
         updatedUser.setRole(user.getRole());
+        userRepository.save(updatedUser);
 
-        return userRepository.save(updatedUser);
+        return UserMapper.toDTO(updatedUser);
     }
 }

@@ -2,6 +2,7 @@ package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.ExpenseDTO;
+import org.financialTracker.exception.ExpenseNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
 import org.financialTracker.repository.JpaExpenseRepository;
@@ -24,8 +25,7 @@ public class ExpenseService {
 
     public ExpenseDTO getExpenseById(Long id) {
         Expense expense = jpaExpenseRepository.findById(id).orElseThrow(
-                // add custom exception
-                () -> new NotFoundException("Expense with id: '" + id + "' not found")
+                () -> new ExpenseNotFoundException("Expense with id: '" + id + "' not found")
         );
         return ExpenseMapper.toDTO(expense);
     }
@@ -36,25 +36,22 @@ public class ExpenseService {
     }
 
     public ExpenseDTO updateExpense(Long id, Expense expense) {
-        if (jpaExpenseRepository.existsById(id)) {
-            Expense updatedExpense = jpaExpenseRepository.findById(id).orElseThrow(
-                    () -> new NotFoundException("Expense with id '" + id + "' not found")
-            );
-            updatedExpense.setAmount(expense.getAmount());
-            updatedExpense.setDescription(expense.getDescription());
-            updatedExpense.setCategory(expense.getCategory());
-            jpaExpenseRepository.save(updatedExpense);
-            return ExpenseMapper.toDTO(updatedExpense);
-        }
-        // custom exception
-        return null;
+        Expense updatedExpense = jpaExpenseRepository.findById(id).orElseThrow(
+                () -> new ExpenseNotFoundException("Expense with id '" + id + "' not found")
+        );
+
+        updatedExpense.setAmount(expense.getAmount());
+        updatedExpense.setDescription(expense.getDescription());
+        updatedExpense.setCategory(expense.getCategory());
+        jpaExpenseRepository.save(updatedExpense);
+
+        return ExpenseMapper.toDTO(updatedExpense);
     }
 
-    public boolean deleteExpense(Long id) {
-        if (jpaExpenseRepository.existsById(id)) {
-            jpaExpenseRepository.deleteById(id);
-            return true;
+    public void deleteExpense(Long id) {
+        if (!jpaExpenseRepository.existsById(id)) {
+            throw new ExpenseNotFoundException("Expense with id '" + id + "' not found");
         }
-        return false;
+        jpaExpenseRepository.deleteById(id);
     }
 }

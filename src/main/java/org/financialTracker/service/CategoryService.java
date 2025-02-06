@@ -2,6 +2,7 @@ package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.CategoryDTO;
+import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.model.Category;
 import org.financialTracker.repository.JpaCategoryRepository;
@@ -23,37 +24,34 @@ public class CategoryService {
 
     public CategoryDTO getCategoryById(Long id) {
         Category category = jpaCategoryRepository.findById(id).orElseThrow(
-                // add custom exception
-                () -> new NotFoundException("Category '" + id + "' not found")
+                () -> new CategoryNotFoundException("Category '" + id + "' not found")
         );
+
         return CategoryMapper.toDTO(category);
     }
 
     public CategoryDTO createCategory(Category category) {
-        jpaCategoryRepository.save(category);
-        return CategoryMapper.toDTO(category);
+        Category savedCategory = jpaCategoryRepository.save(category);
+        return CategoryMapper.toDTO(savedCategory);
     }
 
     public CategoryDTO updateCategory(Long id, Category category) {
-        if (jpaCategoryRepository.existsById(id)) {
-            Category updatedCategory = jpaCategoryRepository.findById(id).orElseThrow(
-                    () -> new NotFoundException("Category '" + id + "' not found")
-            );
-            updatedCategory.setTitle(category.getTitle());
-            updatedCategory.setIcon(category.getIcon());
-            updatedCategory.setDescription(category.getDescription());
-            jpaCategoryRepository.save(updatedCategory);
-            return CategoryMapper.toDTO(updatedCategory);
-        }
-        // custom exception
-        return null;
+        Category updatedCategory = jpaCategoryRepository.findById(id).orElseThrow(
+                () -> new CategoryNotFoundException("Category '" + id + "' not found")
+        );
+
+        updatedCategory.setTitle(category.getTitle());
+        updatedCategory.setIcon(category.getIcon());
+        updatedCategory.setDescription(category.getDescription());
+        jpaCategoryRepository.save(updatedCategory);
+        
+        return CategoryMapper.toDTO(updatedCategory);
     }
 
-    public boolean deleteCategory(Long id) {
-        if (jpaCategoryRepository.existsById(id)) {
-            jpaCategoryRepository.deleteById(id);
-            return true;
+    public void deleteCategory(Long id) {
+        if (!jpaCategoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException("Category '" + id + "' not found");
         }
-        return false;
+        jpaCategoryRepository.deleteById(id);
     }
 }
