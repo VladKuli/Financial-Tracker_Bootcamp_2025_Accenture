@@ -25,4 +25,32 @@ public class UserController {
     public ResponseEntity<UserDTO> getCurrentUser() throws AuthException {
         return ResponseEntity.ok(authService.getAuthenticatedUser());
     }
+
+    // 2nd part
+    @GetMapping("/all")
+    public List<UserDTO> getUsers() {
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public UserDTO getUser(@PathVariable("id") Long id) {
+        return userService.getUser(id);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.createUser(user));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("Deleted user with id " + id);
+    }
+
 }
