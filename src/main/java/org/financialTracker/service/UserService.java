@@ -2,15 +2,18 @@ package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.UserDTO;
+import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,6 +59,7 @@ public class UserService implements UserDetailsService {
                 .authorities("ROLE_" + user.getRole().name())
                 .build();
 
+    }
 
     // 2nd part
     // Get all users
@@ -72,11 +76,6 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    // Create user
-    public UserDTO createUser(User user) {
-        User savedUser = jpaUserRepository.save(user);
-        return UserMapper.toDTO(savedUser);
-    }
 
     // Update user
     public UserDTO updateUser(Long id, User user) {
@@ -95,9 +94,9 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(Long id) {
-        if (!jpaUserRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User with id '" + id + "' not found");
         }
-        jpaUserRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
