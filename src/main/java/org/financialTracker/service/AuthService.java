@@ -9,6 +9,7 @@ import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
 import org.financialTracker.dto.UserDTO;
 import org.financialTracker.mapper.UserMapper;
+import org.financialTracker.model.Role;
 import org.financialTracker.model.User;
 import org.financialTracker.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,13 +36,29 @@ public class AuthService {
     /**
      * Register a new user
      */
+
     public UserDTO registerUser(User user) throws AuthException {
+        if (userService.getByUsername(user.getUsername()).isPresent()) {
+            throw new AuthException("Username is already taken");
+        }
+        if (userService.getByEmail(user.getEmail()).isPresent()) {
+            throw new AuthException("Email is already registered");
+        }
         if (!isValidPassword(user.getPassword())) {
             throw new AuthException("Password does not meet security requirements");
         }
 
+        //Set default role if not provided
+        if (user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
+
+        //Hash the password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userService.saveUser(user);
     }
+
 
     /**
      * Authenticate user and generate tokens
@@ -140,7 +157,12 @@ public class AuthService {
      * Deleting refresh token
      */
     public void logout(String username) {
-        refreshStorage.remove(username);
+        if (refreshStorage.containsKey(username)) {
+            refreshStorage.remove(username);
+            log.info("Logout successful for user: {}", username);
+        } else {
+            log.warn("Logout attempt for non-existent user: {}", username);
+        }
     }
 
     /**

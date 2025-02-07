@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,34 +45,31 @@ public class JwtTokenProvider {
      * Generating an access-token
      */
     public String generateAccessToken(@NonNull UserDetails userDetails) {
-        return generateToken(userDetails, jwtAccessSecret, 30);
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant accessExpirationInstant = now.plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant();
+        final Date accessExpiration = Date.from(accessExpirationInstant);
+
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .expiration(accessExpiration)
+                .signWith(jwtAccessSecret)
+                .claim("roles", userDetails.getAuthorities())
+                .claim("name", userDetails.getUsername())
+                .compact();
     }
 
     /**
      * Generation of refresh token
      */
     public String generateRefreshToken(@NonNull UserDetails userDetails) {
-        return generateToken(userDetails, jwtRefreshSecret, 43200);
-    }
-
-    /**
-     * The main method of token generation
-     */
-    private String generateToken(UserDetails userDetails, Key key, int expirationMinutes) {
-        Instant now = Instant.now();
-        Instant expirationInstant = now.plusSeconds(expirationMinutes * 60L);
-        Date expiration = Date.from(expirationInstant);
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("username", userDetails.getUsername());
-        claims.put("roles", userDetails.getAuthorities());
+        final LocalDateTime now = LocalDateTime.now();
+        final Instant refreshExpirationInstant  = now.plusDays(30).atZone(ZoneId.systemDefault()).toInstant();
+        final Date refreshExpiration = Date.from(refreshExpirationInstant );
 
         return Jwts.builder()
-                .claims(claims)
                 .subject(userDetails.getUsername())
-                .expiration(expiration)
-                .issuedAt(Date.from(now))
-                .signWith(key)
+                .expiration(refreshExpiration)
+                .signWith(jwtAccessSecret)
                 .compact();
     }
 
