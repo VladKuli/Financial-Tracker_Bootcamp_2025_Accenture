@@ -32,20 +32,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    public UserDTO saveUser(User user) {
-
-        if (userRepository.existsByUsername(UserMapper.toDTO(user).getUsername())) {
-            throw new RuntimeException("A user with this username already exists");
-        }
-
-        if (userRepository.existsByEmail(UserMapper.toDTO(user).getEmail())) {
-            throw new RuntimeException("User with this email already exists");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userRepository.save(user);
-        return UserMapper.toDTO(savedUser);
-    }
 
 
     @Override
@@ -78,8 +64,8 @@ public class UserService implements UserDetailsService {
 
 
     // Update user
-    public UserDTO updateUser(Long id, User user) {
-        User updatedUser = userRepository.findById(id)
+    public UserDTO updateUser(User user) {
+        User updatedUser = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         updatedUser.setUsername(user.getUsername()); // Assign passed body values
@@ -98,5 +84,9 @@ public class UserService implements UserDetailsService {
             throw new UserNotFoundException("User with id '" + id + "' not found");
         }
         userRepository.deleteById(id);
+    }
+
+    public UserDTO saveUser(User user){
+        return UserMapper.toDTO(userRepository.save(user));
     }
 }
