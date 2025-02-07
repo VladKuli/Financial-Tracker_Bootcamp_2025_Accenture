@@ -30,7 +30,7 @@ public class UserMapper {
                 user.getName(),
                 user.getSurname(),
                 user.getEmail(),
-                user.getRole(),
+                user.getRole().toString(),
                 expenseDTOs
         );
     }

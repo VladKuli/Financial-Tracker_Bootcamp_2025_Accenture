@@ -6,16 +6,48 @@ import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-    private final JpaUserRepository userRepository;
-    private final JpaUserRepository jpaUserRepository;
+public class UserService implements UserDetailsService {
 
+    private final JpaUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
+    public Optional<User> getByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> getByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities("ROLE_" + user.getRole().name())
+                .build();
+
+    }
+
+    // 2nd part
     // Get all users
     public List<UserDTO> getUsers() {
         return UserMapper.toDTOList(
@@ -30,15 +62,10 @@ public class UserService {
         );
     }
 
-    // Create user
-    public UserDTO createUser(User user) {
-        User savedUser = jpaUserRepository.save(user);
-        return UserMapper.toDTO(savedUser);
-    }
 
     // Update user
-    public UserDTO updateUser(Long id, User user) {
-        User updatedUser = userRepository.findById(id)
+    public UserDTO updateUser(User user) {
+        User updatedUser = userRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         updatedUser.setUsername(user.getUsername()); // Assign passed body values
@@ -53,9 +80,13 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        if (!jpaUserRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException("User with id '" + id + "' not found");
         }
-        jpaUserRepository.deleteById(id);
+        userRepository.deleteById(id);
+    }
+
+    public UserDTO saveUser(User user){
+        return UserMapper.toDTO(userRepository.save(user));
     }
 }

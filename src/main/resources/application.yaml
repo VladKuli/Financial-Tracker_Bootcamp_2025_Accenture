@@ -1,3 +1,8 @@
+jwt:
+  secret:
+    access: ${SECRET_ACCESS}
+    refresh: ${SECRET_REFRESH}
+
 spring:
   datasource:
     url: ${DATABASE_URL}
@@ -7,17 +12,23 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-server:
-  error:
-    include-message: always
+  server:
+    error:
+      include-message: always
 
-openai:
-  api:
-    key: ${OPENAI_KEY}
-    url: ${OPENAI_URL}
+  openai:
+    api:
+      key: ${OPENAI_KEY}
+      url: ${OPENAI_URL}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
