@@ -1,6 +1,6 @@
 package org.financialTracker.mapper;
 
-import org.financialTracker.dto.ExpenseDTO;
+import org.financialTracker.dto.response.ExpenseResponseDTO;
 import org.financialTracker.model.Expense;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +14,11 @@ public class ExpenseMapper {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     // Convert a single Expense entity to ExpenseDTO
-    public static ExpenseDTO toDTO(Expense expense) {
+    public static ExpenseResponseDTO toDTO(Expense expense) {
         if (expense == null) {
             return null;
         }
-        return new ExpenseDTO(
+        return new ExpenseResponseDTO(
                 expense.getId(),
                 expense.getAmount(),
                 dateFormat.format(expense.getDate()), // Convert Date to String
@@ -30,7 +30,7 @@ public class ExpenseMapper {
     }
 
     // Convert a list of Expense entities to a list of ExpenseDTOs
-    public static List<ExpenseDTO> toDTOList(List<Expense> expenses) {
+    public static List<ExpenseResponseDTO> toDTOList(List<Expense> expenses) {
         return expenses.stream()
                 .map(ExpenseMapper::toDTO)
                 .collect(Collectors.toList());

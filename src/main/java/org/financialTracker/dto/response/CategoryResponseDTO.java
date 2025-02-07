@@ -1,4 +1,4 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.response;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDTO {
+public class CategoryResponseDTO {
 
     private Long id;
     private String title;

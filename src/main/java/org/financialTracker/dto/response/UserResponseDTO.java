@@ -1,4 +1,4 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.response;
 
 import lombok.*;
 
@@ -8,13 +8,13 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class UserResponseDTO {
     private Long id;
     private String username;
     private String name;
     private String surname;
     private String email;
     private String role;
-    private List<ExpenseDTO> expenses;
+    private List<ExpenseResponseDTO> expenses;
 }
 

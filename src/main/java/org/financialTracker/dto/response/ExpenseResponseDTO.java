@@ -1,4 +1,4 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.response;
 
 import lombok.*;
 import java.math.BigDecimal;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpenseDTO {
+public class ExpenseResponseDTO {
 
     private Long id;
     private BigDecimal amount;

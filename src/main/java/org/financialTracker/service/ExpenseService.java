@@ -1,57 +1,98 @@
 package org.financialTracker.service;
 
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
-import org.financialTracker.dto.ExpenseDTO;
+import org.financialTracker.dto.request.UpdateExpenseDTO;
+import org.financialTracker.dto.response.ExpenseResponseDTO;
+import org.financialTracker.dto.request.CreateExpenseDTO;
+import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.exception.ExpenseNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
+import org.financialTracker.model.User;
+import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaExpenseRepository;
+import org.financialTracker.repository.JpaUserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
     private final JpaExpenseRepository jpaExpenseRepository;
+    private final AuthService authService;
+    private final JpaUserRepository jpaUserRepository;
+    private final JpaCategoryRepository jpaCategoryRepository;
 
-    public List<ExpenseDTO> getExpensesByFilter(BigDecimal amount, LocalDate date, String categoryTitle) {
-        List<Expense> expenses = jpaExpenseRepository.findExpensesByFilter(amount, date, categoryTitle);
-        return ExpenseMapper.toDTOList(expenses);
+    public List<ExpenseResponseDTO> getExpensesByUser() throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
+
+        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpenseByUser(currentUser));
     }
 
-    public ExpenseDTO getExpenseById(Long id) {
-        Expense expense = jpaExpenseRepository.findById(id).orElseThrow(
-                () -> new ExpenseNotFoundException("Expense with id: '" + id + "' not found")
-        );
+    public ExpenseResponseDTO getExpensesByIdAndUser(Long id) throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
+
+        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+                .orElseThrow(
+                        () -> new ExpenseNotFoundException("Expense with id " + id + " not found")
+                );
+
         return ExpenseMapper.toDTO(expense);
     }
 
-    public ExpenseDTO createExpense(Expense expense) {
-        jpaExpenseRepository.save(expense);
-        return ExpenseMapper.toDTO(expense);
+    public ExpenseResponseDTO createExpense(CreateExpenseDTO createExpenseDTO) throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
+
+        Expense newExpense = new Expense();
+        newExpense.setAmount(createExpenseDTO.getAmount());
+        newExpense.setDescription(createExpenseDTO.getDescription());
+        newExpense.setCategory(
+                jpaCategoryRepository.findById(createExpenseDTO.getCategoryId())
+                        .orElseThrow(
+                                () -> new CategoryNotFoundException("Category with id " + createExpenseDTO.getCategoryId() + " not found")
+                        )
+        );
+        newExpense.setUser(jpaUserRepository.findByUsername(currentUser.getUsername()).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        ));
+        jpaExpenseRepository.save(newExpense);
+
+        return ExpenseMapper.toDTO(newExpense);
     }
 
-    public ExpenseDTO updateExpense(Long id, Expense expense) {
-        Expense updatedExpense = jpaExpenseRepository.findById(id).orElseThrow(
-                () -> new ExpenseNotFoundException("Expense with id '" + id + "' not found")
-        );
+    public ExpenseResponseDTO updateExpense(Long id, UpdateExpenseDTO updateExpenseDTO) throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
 
-        updatedExpense.setAmount(expense.getAmount());
-        updatedExpense.setDescription(expense.getDescription());
-        updatedExpense.setCategory(expense.getCategory());
+        Expense updatedExpense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+                .orElseThrow(
+                        () -> new ExpenseNotFoundException("Expense not found")
+                );
+
+        updatedExpense.setAmount(updateExpenseDTO.getAmount());
+        updatedExpense.setDescription(updateExpenseDTO.getDescription());
+        updatedExpense.setCategory(
+                jpaCategoryRepository.findById(updateExpenseDTO.getCategoryId())
+                        .orElseThrow(
+                                () -> new CategoryNotFoundException("Category with id " + updateExpenseDTO.getCategoryId() + " not found")
+                        )
+        );
         jpaExpenseRepository.save(updatedExpense);
 
         return ExpenseMapper.toDTO(updatedExpense);
     }
 
-    public void deleteExpense(Long id) {
-        if (!jpaExpenseRepository.existsById(id)) {
-            throw new ExpenseNotFoundException("Expense with id '" + id + "' not found");
-        }
-        jpaExpenseRepository.deleteById(id);
+    public void deleteExpense(Long id) throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
+
+        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+                .orElseThrow(
+                    () -> new ExpenseNotFoundException("Expense with id '" + id + "' not found")
+                );
+
+        jpaExpenseRepository.delete(expense);
     }
 }

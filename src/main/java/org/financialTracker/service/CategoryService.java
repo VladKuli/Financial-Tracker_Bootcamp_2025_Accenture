@@ -1,7 +1,8 @@
 package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
-import org.financialTracker.dto.CategoryDTO;
+import org.financialTracker.dto.response.CategoryResponseDTO;
+import org.financialTracker.dto.request.CreateCategoryDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.model.Category;
@@ -15,13 +16,13 @@ import java.util.List;
 public class CategoryService {
     private final JpaCategoryRepository jpaCategoryRepository;
 
-    public List<CategoryDTO> getCategoriesByFilter(String title) {
+    public List<CategoryResponseDTO> getCategoriesByFilter(String title) {
         // Get filtered categories based on request parameters
         List<Category> categories = jpaCategoryRepository.findCategoriesByFilter(title);
         return CategoryMapper.toDTOList(categories);
     }
 
-    public CategoryDTO getCategoryById(Long id) {
+    public CategoryResponseDTO getCategoryById(Long id) {
         Category category = jpaCategoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException("Category '" + id + "' not found")
         );
@@ -29,12 +30,18 @@ public class CategoryService {
         return CategoryMapper.toDTO(category);
     }
 
-    public CategoryDTO createCategory(Category category) {
-        Category savedCategory = jpaCategoryRepository.save(category);
-        return CategoryMapper.toDTO(savedCategory);
+    public CategoryResponseDTO createCategory(CreateCategoryDTO createCategoryDTO) {
+
+        Category newCategory = new Category();
+        newCategory.setTitle(createCategoryDTO.getTitle());
+        newCategory.setDescription(createCategoryDTO.getDescription());
+        newCategory.setIcon(createCategoryDTO.getIcon());
+        jpaCategoryRepository.save(newCategory);
+
+        return CategoryMapper.toDTO(newCategory);
     }
 
-    public CategoryDTO updateCategory(Long id, Category category) {
+    public CategoryResponseDTO updateCategory(Long id, Category category) {
         Category updatedCategory = jpaCategoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException("Category '" + id + "' not found")
         );

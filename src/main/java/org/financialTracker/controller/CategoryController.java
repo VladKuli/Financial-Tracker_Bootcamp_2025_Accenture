@@ -1,7 +1,8 @@
 package org.financialTracker.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.financialTracker.dto.CategoryDTO;
+import org.financialTracker.dto.response.CategoryResponseDTO;
+import org.financialTracker.dto.request.CreateCategoryDTO;
 import org.financialTracker.model.Category;
 import org.financialTracker.service.CategoryService;
 import org.springframework.http.ResponseEntity;
@@ -20,26 +21,26 @@ public class CategoryController {
 
     // GET endpoint to retrieve all categories
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories(
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
         @RequestParam(required = false) String title) {   // Optional filter by category title
         return ResponseEntity.ok(categoryService.getCategoriesByFilter(title));
     }
 
     // GET endpoint to retrieve a category by its ID
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     // POST endpoint to create a new category
     @PostMapping("/add")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.createCategory(category));
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryDTO createCategoryDTO) {
+        return ResponseEntity.ok(categoryService.createCategory(createCategoryDTO));
     }
 
     // PUT endpoint to update an existing category (using /update and /{id})
     @PutMapping("/update/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable("id") Long id, @RequestBody Category category) {
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable("id") Long id, @RequestBody Category category) {
         return ResponseEntity.ok(categoryService.updateCategory(id, category));
     }
 

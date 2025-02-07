@@ -1,16 +1,17 @@
 package org.financialTracker.service;
 
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
-import org.financialTracker.dto.UserDTO;
+import org.financialTracker.dto.request.UpdateUserDTO;
+import org.financialTracker.dto.response.UserResponseDTO;
+import org.financialTracker.dto.request.CreateUserDTO;
 import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,18 +22,12 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final JpaUserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-
-    public Optional<User> getByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
+    public Optional<User> getByUsername(String username) { return userRepository.findByUsername(username); }
 
     public Optional<User> getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,35 +44,32 @@ public class UserService implements UserDetailsService {
 
     // 2nd part
     // Get all users
-    public List<UserDTO> getUsers() {
+    public List<UserResponseDTO> getUsers() {
         return UserMapper.toDTOList(
                 userRepository.findAll()
         );
     }
 
     // Get user by entering id
-    public UserDTO getUser(long id) {
+    public UserResponseDTO getUser(long id) {
         return UserMapper.toDTO(
                 userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"))
         );
     }
 
-
     // Update user
-    public UserDTO updateUser(User user) {
-        User updatedUser = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        updatedUser.setUsername(user.getUsername()); // Assign passed body values
-        updatedUser.setName(user.getName());
-        updatedUser.setSurname(user.getSurname());
-        updatedUser.setEmail(user.getEmail());
-        updatedUser.setPassword(user.getPassword());
-        updatedUser.setRole(user.getRole());
-        userRepository.save(updatedUser);
-
-        return UserMapper.toDTO(updatedUser);
-    }
+//    public UserResponseDTO updateUser(UpdateUserDTO updateUserDTO) throws AuthException {
+//        User currentUser = authService.getAuthenticatedUserWoDTO();
+//
+//        currentUser.setUsername(updateUserDTO.getUsername()); // Assign passed body values
+//        currentUser.setName(updateUserDTO.getName());
+//        currentUser.setSurname(updateUserDTO.getSurname());
+//        currentUser.setEmail(updateUserDTO.getEmail());
+//        currentUser.setPassword(updateUserDTO.getPassword());
+//        userRepository.save(currentUser);
+//
+//        return UserMapper.toDTO(currentUser);
+//    }
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
@@ -86,7 +78,14 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO saveUser(User user){
+    public UserResponseDTO saveUser(CreateUserDTO createUserDTO){
+        User user = new User();
+        user.setUsername(createUserDTO.getUsername());
+        user.setName(createUserDTO.getName());
+        user.setSurname(createUserDTO.getSurname());
+        user.setEmail(createUserDTO.getEmail());
+        user.setPassword(createUserDTO.getPassword());
+        user.setRole(createUserDTO.getRole());
         return UserMapper.toDTO(userRepository.save(user));
     }
 }

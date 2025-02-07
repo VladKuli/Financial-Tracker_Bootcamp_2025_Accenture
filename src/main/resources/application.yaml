@@ -22,10 +22,10 @@ spring:
     error:
       include-message: always
 
-  openai:
-    api:
-      key: ${OPENAI_KEY}
-      url: ${OPENAI_URL}
+openai:
+  api:
+    key: ${OPENAI_KEY}
+    url: ${OPENAI_URL}
 
 springdoc:
   api-docs:

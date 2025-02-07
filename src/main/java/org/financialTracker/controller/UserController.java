@@ -2,15 +2,13 @@ package org.financialTracker.controller;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
-import org.financialTracker.dto.UserDTO;
+import org.financialTracker.dto.request.UpdateUserDTO;
+import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.model.User;
 import org.financialTracker.service.AuthService;
 import org.financialTracker.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -22,13 +20,13 @@ public class UserController {
 
 
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getCurrentUser() throws AuthException {
+    public ResponseEntity<UserResponseDTO> getCurrentUser() throws AuthException {
         return ResponseEntity.ok(authService.getAuthenticatedUser());
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser( user));
-    }
+//    @PutMapping("/update")
+//    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody UpdateUserDTO updateUserDTO) throws AuthException {
+//        return ResponseEntity.ok(userService.updateUser(updateUserDTO));
+//    }
 
 }

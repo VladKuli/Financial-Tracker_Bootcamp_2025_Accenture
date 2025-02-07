@@ -7,7 +7,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
-import org.financialTracker.dto.UserDTO;
+import org.financialTracker.dto.response.UserResponseDTO;
+import org.financialTracker.dto.request.CreateUserDTO;
 import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.Role;
 import org.financialTracker.model.User;
@@ -37,26 +38,26 @@ public class AuthService {
      * Register a new user
      */
 
-    public UserDTO registerUser(User user) throws AuthException {
-        if (userService.getByUsername(user.getUsername()).isPresent()) {
+    public UserResponseDTO registerUser(CreateUserDTO createUserDTO) throws AuthException {
+        if (userService.getByUsername(createUserDTO.getUsername()).isPresent()) {
             throw new AuthException("Username is already taken");
         }
-        if (userService.getByEmail(user.getEmail()).isPresent()) {
+        if (userService.getByEmail(createUserDTO.getEmail()).isPresent()) {
             throw new AuthException("Email is already registered");
         }
-        if (!isValidPassword(user.getPassword())) {
+        if (!isValidPassword(createUserDTO.getPassword())) {
             throw new AuthException("Password does not meet security requirements");
         }
 
         //Set default role if not provided
-        if (user.getRole() == null) {
-            user.setRole(Role.USER);
+        if (createUserDTO.getRole() == null) {
+            createUserDTO.setRole(Role.USER);
         }
 
         //Hash the password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        createUserDTO.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
 
-        return userService.saveUser(user);
+        return userService.saveUser(createUserDTO);
     }
 
 
@@ -165,10 +166,17 @@ public class AuthService {
         }
     }
 
+    public User getAuthenticatedUserWoDTO() throws AuthException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userService.getByUsername(principal.toString()).orElseThrow(() -> new AuthException("User not found"));
+
+    }
+
     /**
      * Obtaining information about an authenticated user
      */
-    public UserDTO getAuthenticatedUser() throws AuthException {
+    public UserResponseDTO getAuthenticatedUser() throws AuthException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userService.getByUsername(principal.toString())

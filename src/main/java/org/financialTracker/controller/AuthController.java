@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
 import org.financialTracker.dto.RefreshJwtRequest;
-import org.financialTracker.model.User;
+import org.financialTracker.dto.request.CreateUserDTO;
 import org.financialTracker.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.financialTracker.dto.UserDTO;
+import org.financialTracker.dto.response.UserResponseDTO;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,8 +35,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody User user) throws AuthException {
-        return ResponseEntity.ok(authService.registerUser(user));
+    public ResponseEntity<UserResponseDTO> register(@RequestBody CreateUserDTO createUserDTO) throws AuthException {
+        return ResponseEntity.ok(authService.registerUser(createUserDTO));
     }
 
     @PostMapping("/token")
