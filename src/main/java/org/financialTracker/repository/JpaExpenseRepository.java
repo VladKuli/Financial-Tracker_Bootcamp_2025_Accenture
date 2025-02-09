@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ public interface JpaExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findExpenseByUser(User user);
 
     Optional<Expense> findExpenseByIdAndUser(Long id, User user);
+
+    @Query("SELECT e FROM Expense e WHERE e.date BETWEEN :startDate AND :endDate AND e.user = :user")
+    List<Expense> findExpensesForCurrentMonth(User user, Date startDate, Date endDate);
 
     @Query("SELECT e FROM Expense e JOIN e.category c " +
             "WHERE (:amount IS NULL OR e.amount = :amount) " +

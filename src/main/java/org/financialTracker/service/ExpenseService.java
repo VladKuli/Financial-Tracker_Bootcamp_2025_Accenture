@@ -13,11 +13,15 @@ import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaExpenseRepository;
 import org.financialTracker.repository.JpaUserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,17 @@ public class ExpenseService {
                 );
 
         return ExpenseMapper.toDTO(expense);
+    }
+
+    public List<ExpenseResponseDTO> getMonthlyExpenses() throws AuthException {
+        User currentUser = authService.getAuthenticatedUserWoDTO();
+        LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
+        LocalDate endDateLocal = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+
+        Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpensesForCurrentMonth(currentUser, startDate, endDate));
     }
 
     public ExpenseResponseDTO createExpense(CreateExpenseDTO createExpenseDTO) throws AuthException {

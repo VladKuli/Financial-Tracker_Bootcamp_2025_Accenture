@@ -33,6 +33,11 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getExpensesByUser());
     }
 
+    @GetMapping("/month")
+    public ResponseEntity<List<ExpenseResponseDTO>> getMonthlyExpenses() throws AuthException {
+        return ResponseEntity.ok(expenseService.getMonthlyExpenses());
+    }
+
     // GET endpoint to retrieve a specific USER expense by its ID
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable Long id) throws AuthException {
