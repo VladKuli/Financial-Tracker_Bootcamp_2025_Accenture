@@ -38,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            final String token = JwtUtil.getTokenFromRequest(request); // ✅ Вызываем метод из JwtUtil
+            final String token = JwtUtil.getTokenFromRequest(request);
 
             if (token != null) {
                 if (revokedTokenService.isTokenRevoked(token)) {
