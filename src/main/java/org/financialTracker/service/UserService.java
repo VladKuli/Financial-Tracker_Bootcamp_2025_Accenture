@@ -56,7 +56,8 @@ public class UserService implements UserDetailsService {
     // Get user by entering id
     public UserResponseDTO getUser(long id) {
         return UserMapper.toDTO(
-                jpaUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"))
+                jpaUserRepository.findById(id)
+                        .orElseThrow(() -> new UserNotFoundException("User with ID '" + id + "' not found"))
         );
     }
 

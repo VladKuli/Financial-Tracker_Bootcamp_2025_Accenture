@@ -8,12 +8,12 @@ import org.financialTracker.dto.request.CreateExpenseDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.exception.ExpenseNotFoundException;
+import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaExpenseRepository;
 import org.financialTracker.repository.JpaUserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,7 +42,7 @@ public class ExpenseService {
 
         Expense expense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
-                        () -> new ExpenseNotFoundException("Expense with id " + id + " not found")
+                        () -> new ExpenseNotFoundException("Expense with ID '" + id + "' not found")
                 );
 
         return ExpenseMapper.toDTO(expense);
@@ -74,11 +74,11 @@ public class ExpenseService {
         newExpense.setCategory(
                 jpaCategoryRepository.findById(createExpenseDTO.getCategoryId())
                         .orElseThrow(
-                                () -> new CategoryNotFoundException("Category with id " + createExpenseDTO.getCategoryId() + " not found")
+                                () -> new CategoryNotFoundException("Category with ID '" + createExpenseDTO.getCategoryId() + "' not found")
                         )
         );
         newExpense.setUser(jpaUserRepository.findByUsername(currentUser.getUsername()).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
+                () -> new UserNotFoundException("User not found")
         ));
         jpaExpenseRepository.save(newExpense);
 
@@ -90,7 +90,7 @@ public class ExpenseService {
 
         Expense updatedExpense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
-                        () -> new ExpenseNotFoundException("Expense not found")
+                        () -> new ExpenseNotFoundException("Expense with ID '" + id + "' not found")
                 );
 
         updatedExpense.setAmount(updateExpenseDTO.getAmount());
@@ -98,7 +98,7 @@ public class ExpenseService {
         updatedExpense.setCategory(
                 jpaCategoryRepository.findById(updateExpenseDTO.getCategoryId())
                         .orElseThrow(
-                                () -> new CategoryNotFoundException("Category with id " + updateExpenseDTO.getCategoryId() + " not found")
+                                () -> new CategoryNotFoundException("Category with ID '" + updateExpenseDTO.getCategoryId() + "' not found")
                         )
         );
         jpaExpenseRepository.save(updatedExpense);
@@ -111,7 +111,7 @@ public class ExpenseService {
 
         Expense expense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
-                    () -> new ExpenseNotFoundException("Expense with id '" + id + "' not found")
+                    () -> new ExpenseNotFoundException("Expense with ID '" + id + "' not found")
                 );
 
         jpaExpenseRepository.delete(expense);
