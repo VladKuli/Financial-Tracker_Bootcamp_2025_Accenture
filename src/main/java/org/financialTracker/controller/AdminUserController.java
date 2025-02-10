@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
-public class AdminController {
+public class AdminUserController {
 
     private final UserService userService;
     private final AuthService authService;
@@ -40,4 +40,5 @@ public class AdminController {
         userService.deleteUser(id);
         return ResponseEntity.ok("Deleted user with id " + id);
     }
+
 }

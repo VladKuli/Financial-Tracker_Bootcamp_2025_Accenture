@@ -32,23 +32,4 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
-    // POST endpoint to create a new category
-    @PostMapping("/add")
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CreateCategoryDTO createCategoryDTO) {
-        return ResponseEntity.ok(categoryService.createCategory(createCategoryDTO));
-    }
-
-    // PUT endpoint to update an existing category (using /update and /{id})
-    @PutMapping("/update/{id}")
-    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable("id") Long id, @RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.updateCategory(id, category));
-    }
-
-    // DELETE endpoint to delete a category (using /delete and /{id})
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.ok("Deleted category with id " + id);
-    }
-
 }
