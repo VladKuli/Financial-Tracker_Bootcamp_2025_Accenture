@@ -1,7 +1,6 @@
 package org.financialTracker.service;
 
 import jakarta.security.auth.message.AuthException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.request.UpdateExpenseDTO;
 import org.financialTracker.dto.response.ExpenseResponseDTO;
@@ -11,14 +10,13 @@ import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.exception.ExpenseNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
 import org.financialTracker.model.Expense;
-import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaExpenseRepository;
 import org.financialTracker.repository.JpaUserRepository;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
@@ -58,7 +56,13 @@ public class ExpenseService {
         Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpensesForCurrentMonth(currentUser.getId(), startDate, endDate));
+        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpensesForCurrentMonth(currentUser.getUsername(), startDate, endDate));
+    }
+
+    public BigDecimal getTotalMonthlyExpenses() throws AuthException {
+        return getMonthlyExpenses().stream()
+                .map(ExpenseResponseDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public ExpenseResponseDTO createExpense(CreateExpenseDTO createExpenseDTO) throws AuthException {

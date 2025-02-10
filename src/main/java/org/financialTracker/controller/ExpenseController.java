@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -33,9 +34,14 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.getExpensesByUser());
     }
 
-    @GetMapping("/month")
+    @GetMapping("/monthly")
     public ResponseEntity<List<ExpenseResponseDTO>> getMonthlyExpenses() throws AuthException {
         return ResponseEntity.ok(expenseService.getMonthlyExpenses());
+    }
+
+    @GetMapping("/monthly/total")
+    public ResponseEntity<String> getTotalMonthlyExpenses() throws AuthException {
+        return ResponseEntity.ok("Total: " + expenseService.getTotalMonthlyExpenses());
     }
 
     // GET endpoint to retrieve a specific USER expense by its ID

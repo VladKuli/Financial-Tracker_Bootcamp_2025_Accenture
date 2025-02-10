@@ -1,5 +1,6 @@
 package org.financialTracker.repository;
 
+import org.financialTracker.dto.response.ExpenseResponseDTO;
 import org.financialTracker.model.Expense;
 import org.financialTracker.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +21,8 @@ public interface JpaExpenseRepository extends JpaRepository<Expense, Long> {
 
     Optional<Expense> findExpenseByIdAndUser_Username(Long id, String username);
 
-    @Query("SELECT e FROM Expense e WHERE e.date BETWEEN :startDate AND :endDate AND e.user.id = :userId")
-    List<Expense> findExpensesForCurrentMonth(Long userId, Date startDate, Date endDate);
+    @Query("SELECT e FROM Expense e WHERE e.date BETWEEN :startDate AND :endDate AND e.user.username = :username")
+    List<Expense> findExpensesForCurrentMonth(String username, Date startDate, Date endDate);
 
     List<Expense> findByCategoryId(Long id);
 
