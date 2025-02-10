@@ -2,6 +2,7 @@ package org.financialTracker.controller;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import org.financialTracker.dto.request.ChangePasswordDTO;
 import org.financialTracker.dto.request.UpdateUserDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.model.User;
@@ -24,9 +25,16 @@ public class UserController {
         return ResponseEntity.ok(authService.getAuthenticatedUser());
     }
 
-//    @PutMapping("/update")
-//    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody UpdateUserDTO updateUserDTO) throws AuthException {
-//        return ResponseEntity.ok(userService.updateUser(updateUserDTO));
-//    }
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) throws AuthException {
+        userService.changePassword(changePasswordDTO);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateUser(@RequestBody UpdateUserDTO updateUserDTO) throws AuthException {
+        userService.updateUser(updateUserDTO);
+        return ResponseEntity.ok("User updated successfully");
+    }
 
 }

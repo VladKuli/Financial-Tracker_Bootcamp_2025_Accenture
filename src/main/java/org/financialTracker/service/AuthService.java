@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
+import org.financialTracker.dto.request.UpdateUserDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.dto.request.CreateUserDTO;
 import org.financialTracker.mapper.UserMapper;
@@ -59,7 +60,6 @@ public class AuthService {
 
         return userService.saveUser(createUserDTO);
     }
-
 
     /**
      * Authenticate user and generate tokens
@@ -170,7 +170,6 @@ public class AuthService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return userService.getByUsername(principal.toString()).orElseThrow(() -> new AuthException("User not found"));
-
     }
 
     /**
