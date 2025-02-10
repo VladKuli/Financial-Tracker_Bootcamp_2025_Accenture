@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.request.UpdateExpenseDTO;
 import org.financialTracker.dto.response.ExpenseResponseDTO;
 import org.financialTracker.dto.request.CreateExpenseDTO;
+import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.exception.ExpenseNotFoundException;
 import org.financialTracker.mapper.ExpenseMapper;
@@ -32,15 +33,15 @@ public class ExpenseService {
     private final JpaCategoryRepository jpaCategoryRepository;
 
     public List<ExpenseResponseDTO> getExpensesByUser() throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
-        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpenseByUser(currentUser));
+        return ExpenseMapper.toDTOList(jpaExpenseRepository.findByUser_Username(currentUser.getUsername()));
     }
 
     public ExpenseResponseDTO getExpensesByIdAndUser(Long id) throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
-        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
                         () -> new ExpenseNotFoundException("Expense with id " + id + " not found")
                 );
@@ -49,18 +50,18 @@ public class ExpenseService {
     }
 
     public List<ExpenseResponseDTO> getMonthlyExpenses() throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
         LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
         LocalDate endDateLocal = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
         Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpensesForCurrentMonth(currentUser, startDate, endDate));
+        return ExpenseMapper.toDTOList(jpaExpenseRepository.findExpensesForCurrentMonth(currentUser.getId(), startDate, endDate));
     }
 
     public ExpenseResponseDTO createExpense(CreateExpenseDTO createExpenseDTO) throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
         Expense newExpense = new Expense();
         newExpense.setAmount(createExpenseDTO.getAmount());
@@ -80,9 +81,9 @@ public class ExpenseService {
     }
 
     public ExpenseResponseDTO updateExpense(Long id, UpdateExpenseDTO updateExpenseDTO) throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
-        Expense updatedExpense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+        Expense updatedExpense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
                         () -> new ExpenseNotFoundException("Expense not found")
                 );
@@ -101,9 +102,9 @@ public class ExpenseService {
     }
 
     public void deleteExpense(Long id) throws AuthException {
-        User currentUser = authService.getAuthenticatedUserWoDTO();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
-        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser(id, currentUser)
+        Expense expense = jpaExpenseRepository.findExpenseByIdAndUser_Username(id, currentUser.getUsername())
                 .orElseThrow(
                     () -> new ExpenseNotFoundException("Expense with id '" + id + "' not found")
                 );

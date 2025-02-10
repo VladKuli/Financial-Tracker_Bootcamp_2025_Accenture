@@ -166,11 +166,15 @@ public class AuthService {
         }
     }
 
-    public User getAuthenticatedUserWoDTO() throws AuthException {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return userService.getByUsername(principal.toString()).orElseThrow(() -> new AuthException("User not found"));
-    }
+    /**
+     * Obtaining information about an authenticated user
+     */
+//    public User getAuthenticatedUser() throws AuthException {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        return userService.getByUsername(principal.toString())
+//                .orElseThrow(() -> new AuthException("User not found"));
+//    }
 
     /**
      * Obtaining information about an authenticated user
@@ -183,7 +187,6 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException("User not found"));
 
     }
-
 
     /**
      * Checking password complexity

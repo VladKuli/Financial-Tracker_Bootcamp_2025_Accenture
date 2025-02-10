@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.request.ChangePasswordDTO;
 import org.financialTracker.dto.request.UpdateUserDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
+import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.User;
 import org.financialTracker.service.AuthService;
 import org.financialTracker.service.UserService;

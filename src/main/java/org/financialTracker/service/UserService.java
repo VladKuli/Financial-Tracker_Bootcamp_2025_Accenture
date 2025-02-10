@@ -24,18 +24,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final JpaUserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> getByUsername(String username) { return userRepository.findByUsername(username); }
+    public Optional<User> getByUsername(String username) { return jpaUserRepository.findByUsername(username); }
 
     public Optional<User> getByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return jpaUserRepository.findByEmail(email);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        User user = jpaUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         return org.springframework.security.core.userdetails.User
@@ -46,21 +46,21 @@ public class UserService implements UserDetailsService {
 
     }
 
-    // 2nd part
     // Get all users
     public List<UserResponseDTO> getUsers() {
         return UserMapper.toDTOList(
-                userRepository.findAll()
+                jpaUserRepository.findAll()
         );
     }
 
     // Get user by entering id
     public UserResponseDTO getUser(long id) {
         return UserMapper.toDTO(
-                userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"))
+                jpaUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"))
         );
     }
 
+    // Update current user
     public void updateUser(UpdateUserDTO updateUserDTO) throws AuthException {
         User currentUser = getByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -77,14 +77,14 @@ public class UserService implements UserDetailsService {
         currentUser.setSurname(updateUserDTO.getSurname());
         currentUser.setEmail(updateUserDTO.getEmail());
 
-        userRepository.save(currentUser);
+        jpaUserRepository.save(currentUser);
     }
 
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
+        if (!jpaUserRepository.existsById(id)) {
             throw new UserNotFoundException("User with id '" + id + "' not found");
         }
-        userRepository.deleteById(id);
+        jpaUserRepository.deleteById(id);
     }
 
     public UserResponseDTO saveUser(CreateUserDTO createUserDTO){
@@ -95,7 +95,7 @@ public class UserService implements UserDetailsService {
         user.setEmail(createUserDTO.getEmail());
         user.setPassword(createUserDTO.getPassword());
         user.setRole(createUserDTO.getRole());
-        return UserMapper.toDTO(userRepository.save(user));
+        return UserMapper.toDTO(jpaUserRepository.save(user));
     }
 
     public void changePassword(ChangePasswordDTO changePasswordDTO) {
@@ -111,6 +111,6 @@ public class UserService implements UserDetailsService {
         }
 
         currentUser.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
-        userRepository.save(currentUser);
+        jpaUserRepository.save(currentUser);
     }
 }
