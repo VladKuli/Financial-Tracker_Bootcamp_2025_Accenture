@@ -1,10 +1,12 @@
 package org.financialTracker.util;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.financialTracker.model.JwtAuthentication;
 import org.financialTracker.model.Role;
+import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JwtUtil {
 
+    private static final String AUTHORIZATION = "Authorization";
     /**
      * Generates authentication details from JWT claims.
      */
@@ -60,5 +63,13 @@ public final class JwtUtil {
                 .filter(Objects::nonNull) // Remove null values (invalid roles)
                 .collect(Collectors.toSet());
 
+    }
+
+    public static  String getTokenFromRequest(HttpServletRequest request) {
+        final String bearer = request.getHeader(AUTHORIZATION);
+        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
+        }
+        return null;
     }
 }

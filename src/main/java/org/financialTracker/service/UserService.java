@@ -6,11 +6,9 @@ import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.UserMapper;
 import org.financialTracker.model.User;
 import org.financialTracker.repository.JpaUserRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +19,6 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final JpaUserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
 
     public Optional<User> getByUsername(String username) {

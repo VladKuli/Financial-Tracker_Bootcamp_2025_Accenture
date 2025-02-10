@@ -1,5 +1,4 @@
 package org.financialTracker.service;
-
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -30,7 +30,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final RevokedTokenService revokedTokenService;
     private final ConcurrentHashMap<String, String> refreshStorage = new ConcurrentHashMap<>();
 
     /**
@@ -156,13 +156,17 @@ public class AuthService {
     /**
      * Deleting refresh token
      */
-    public void logout(String username) {
-        if (refreshStorage.containsKey(username)) {
-            refreshStorage.remove(username);
-            log.info("Logout successful for user: {}", username);
-        } else {
-            log.warn("Logout attempt for non-existent user: {}", username);
+    public void logout(String token) {
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("Token is required for logout");
         }
+
+        Claims claims = jwtTokenProvider.getAccessClaims(token);
+        String username = claims.getSubject();
+
+        refreshStorage.remove(username);
+
+        revokedTokenService.revokeToken(token);
     }
 
     /**

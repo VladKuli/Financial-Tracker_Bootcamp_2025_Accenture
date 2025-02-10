@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.financialTracker.model.JwtAuthentication;
+import org.financialTracker.service.AuthService;
+import org.financialTracker.service.RevokedTokenService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -24,8 +26,9 @@ import org.financialTracker.util.JwtUtil;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private static final String AUTHORIZATION = "Authorization";
+
     private final JwtTokenProvider jwtProvider;
+    private final RevokedTokenService revokedTokenService;
 
     @Override
     protected void doFilterInternal(
@@ -35,15 +38,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            final String token = getTokenFromRequest(request);
+            final String token = JwtUtil.getTokenFromRequest(request); // ✅ Вызываем метод из JwtUtil
 
-            if (token != null && jwtProvider.validateAccessToken(token)) {
-                Claims claims = jwtProvider.getAccessClaims(token);
-                JwtAuthentication jwtInfoToken = JwtUtil.generate(claims);
+            if (token != null) {
+                if (revokedTokenService.isTokenRevoked(token)) {
+                    log.warn("Access token is revoked. Blocking request.");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is revoked");
+                    return;
+                }
 
-                jwtInfoToken.setAuthenticated(true);
-                SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
+                if (jwtProvider.validateAccessToken(token)) {
+                    Claims claims = jwtProvider.getAccessClaims(token);
+                    JwtAuthentication jwtInfoToken = JwtUtil.generate(claims);
 
+                    jwtInfoToken.setAuthenticated(true);
+                    SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
+                }
             }
         } catch (JwtException e) {
             log.warn("JWT Error [{}]: {}", e.getClass().getSimpleName(), e.getMessage());
@@ -58,12 +68,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-        final String bearer = request.getHeader(AUTHORIZATION);
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
-        }
-        return null;
-    }
+
 }
 
