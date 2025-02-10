@@ -1,6 +1,7 @@
 package org.financialTracker.service;
 
 import jakarta.security.auth.message.AuthException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.request.UpdateExpenseDTO;
 import org.financialTracker.dto.response.ExpenseResponseDTO;

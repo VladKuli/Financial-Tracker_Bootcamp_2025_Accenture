@@ -23,6 +23,8 @@ public interface JpaExpenseRepository extends JpaRepository<Expense, Long> {
     @Query("SELECT e FROM Expense e WHERE e.date BETWEEN :startDate AND :endDate AND e.user.id = :userId")
     List<Expense> findExpensesForCurrentMonth(Long userId, Date startDate, Date endDate);
 
+    List<Expense> findByCategoryId(Long id);
+
     @Query("SELECT e FROM Expense e JOIN e.category c " +
             "WHERE (:amount IS NULL OR e.amount = :amount) " +
             "AND (:date IS NULL OR e.date = :date) " +

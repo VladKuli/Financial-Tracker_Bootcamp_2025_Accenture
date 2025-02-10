@@ -2,10 +2,8 @@ package org.financialTracker.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -26,4 +24,13 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PreRemove
+    public void preRemove() {
+        if (user != null) {
+            // This will ensure that the 'Expense' is removed from the 'User' collection
+            user.getExpenses().remove(this);  // Adjust this based on the actual relationship.
+            this.user = null;  // Nullify the back-reference to avoid unexpected behavior.
+        }
+    }
 }
