@@ -14,7 +14,7 @@ import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.util.JwtUtil;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
