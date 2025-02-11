@@ -1,6 +1,7 @@
 package org.financialTracker.controller;
 
 import jakarta.security.auth.message.AuthException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
@@ -10,6 +11,7 @@ import org.financialTracker.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.financialTracker.dto.response.UserResponseDTO;
+import org.financialTracker.util.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,8 +31,11 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestParam String username) {
-        authService.logout(username);
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String token = JwtUtil.getTokenFromRequest(request);
+        if (token != null) {
+            authService.logout(token);
+        }
         return ResponseEntity.ok().build();
     }
 

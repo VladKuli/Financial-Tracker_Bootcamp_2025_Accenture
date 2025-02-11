@@ -1,5 +1,4 @@
 package org.financialTracker.service;
-
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +6,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.financialTracker.dto.JwtRequest;
 import org.financialTracker.dto.JwtResponse;
-import org.financialTracker.dto.request.UpdateUserDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.dto.request.CreateUserDTO;
 import org.financialTracker.mapper.UserMapper;
@@ -32,7 +30,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final RevokedTokenService revokedTokenService;
     private final ConcurrentHashMap<String, String> refreshStorage = new ConcurrentHashMap<>();
 
     /**
@@ -157,24 +155,18 @@ public class AuthService {
     /**
      * Deleting refresh token
      */
-    public void logout(String username) {
-        if (refreshStorage.containsKey(username)) {
-            refreshStorage.remove(username);
-            log.info("Logout successful for user: {}", username);
-        } else {
-            log.warn("Logout attempt for non-existent user: {}", username);
+    public void logout(String token) {
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("Token is required for logout");
         }
-    }
 
-    /**
-     * Obtaining information about an authenticated user
-     */
-//    public User getAuthenticatedUser() throws AuthException {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//
-//        return userService.getByUsername(principal.toString())
-//                .orElseThrow(() -> new AuthException("User not found"));
-//    }
+        Claims claims = jwtTokenProvider.getAccessClaims(token);
+        String username = claims.getSubject();
+
+        refreshStorage.remove(username);
+
+        revokedTokenService.revokeToken(token);
+    }
 
     /**
      * Obtaining information about an authenticated user
