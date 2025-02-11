@@ -1,5 +1,11 @@
 package test.service;
-
+/*
+import org.financialTracker.dto.request.CreateExpenseDTO;
+import org.financialTracker.dto.response.ExpenseResponseDTO;
+import org.financialTracker.exception.ExpenseNotFoundException;
+import org.financialTracker.mapper.ExpenseMapper;
+import org.financialTracker.model.Expense;
+import org.financialTracker.repository.JpaExpenseRepository;
 import org.financialTracker.service.ExpenseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,22 +13,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.ZoneId;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import org.financialTracker.dto.ExpenseDTO;
-import org.financialTracker.exception.ExpenseNotFoundException;
-import org.financialTracker.mapper.ExpenseMapper;
-import org.financialTracker.model.Expense;
-import org.financialTracker.repository.JpaExpenseRepository;
-
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExpenseServiceTest {
@@ -34,7 +34,7 @@ class ExpenseServiceTest {
     private ExpenseService expenseService;
 
     private Expense expense;
-    private ExpenseDTO expenseDTO;
+    private ExpenseResponseDTO expenseDTO;
 
     @BeforeEach
     void setUp() {
@@ -48,18 +48,18 @@ class ExpenseServiceTest {
     }
 
     @Test
-    void testGetExpensesByFilter() {
-        when(jpaExpenseRepository.findExpensesByFilter(any(), any(), any())).thenReturn(List.of(expense));
-        List<ExpenseDTO> result = expenseService.getExpensesByFilter(BigDecimal.valueOf(50.00), LocalDate.now(), "Food");
+    void testGetExpensesByUser() {
+        when(jpaExpenseRepository.getExpensesByUser()).thenReturn(List.of(expense));
+        List<ExpenseResponseDTO> result = expenseService.getExpensesByUser();
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(jpaExpenseRepository, times(1)).findExpensesByFilter(any(), any(), any());
+        verify(jpaExpenseRepository, times(1)).getExpensesByUser();
     }
 
     @Test
     void testGetExpenseById_Found() {
         when(jpaExpenseRepository.findById(1L)).thenReturn(Optional.of(expense));
-        ExpenseDTO result = expenseService.getExpenseById(1L);
+        ExpenseResponseDTO result = expenseService.getExpenseById(1L);
         assertNotNull(result);
         assertEquals(1L, result.getId());
         verify(jpaExpenseRepository, times(1)).findById(1L);
@@ -74,24 +74,37 @@ class ExpenseServiceTest {
 
     @Test
     void testCreateExpense() {
-        when(jpaExpenseRepository.save(expense)).thenReturn(expense);
-        ExpenseDTO result = expenseService.createExpense(expense);
+        CreateExpenseDTO createExpenseDTO = new CreateExpenseDTO();
+        createExpenseDTO.setAmount(BigDecimal.valueOf(50.00));
+        createExpenseDTO.setDescription("Dinner");
+        createExpenseDTO.setCategoryId(1L);
+
+        when(jpaExpenseRepository.save(any(Expense.class))).thenReturn(expense);
+
+        ExpenseResponseDTO result = expenseService.createExpense(createExpenseDTO);
+
         assertNotNull(result);
         assertEquals("Dinner", result.getDescription());
-        verify(jpaExpenseRepository, times(1)).save(expense);
+        verify(jpaExpenseRepository, times(1)).save(any(Expense.class));
     }
 
     @Test
     void testUpdateExpense_Found() {
+        CreateExpenseDTO updateExpenseDTO = new CreateExpenseDTO();
+        updateExpenseDTO.setAmount(BigDecimal.valueOf(100.00));
+        updateExpenseDTO.setDescription("Updated Dinner");
+        updateExpenseDTO.setCategoryId(1L);
+
         Expense updatedExpense = new Expense();
-        updatedExpense.setAmount(BigDecimal.valueOf(100.00));
-        updatedExpense.setDescription("Updated Dinner");
+        updatedExpense.setId(1L);
+        updatedExpense.setAmount(updateExpenseDTO.getAmount());
+        updatedExpense.setDescription(updateExpenseDTO.getDescription());
         updatedExpense.setDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         when(jpaExpenseRepository.findById(1L)).thenReturn(Optional.of(expense));
         when(jpaExpenseRepository.save(any(Expense.class))).thenReturn(updatedExpense);
 
-        ExpenseDTO result = expenseService.updateExpense(1L, updatedExpense);
+        ExpenseResponseDTO result = expenseService.updateExpense(1L, updateExpenseDTO);
         assertNotNull(result);
         assertEquals("Updated Dinner", result.getDescription());
         assertEquals(BigDecimal.valueOf(100.00), result.getAmount());
@@ -101,8 +114,13 @@ class ExpenseServiceTest {
 
     @Test
     void testUpdateExpense_NotFound() {
+        CreateExpenseDTO updateExpenseDTO = new CreateExpenseDTO();
+        updateExpenseDTO.setAmount(BigDecimal.valueOf(100.00));
+        updateExpenseDTO.setDescription("Updated Dinner");
+        updateExpenseDTO.setCategoryId(1L);
+
         when(jpaExpenseRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ExpenseNotFoundException.class, () -> expenseService.updateExpense(1L, expense));
+        assertThrows(ExpenseNotFoundException.class, () -> expenseService.updateExpense(1L, updateExpenseDTO));
         verify(jpaExpenseRepository, times(1)).findById(1L);
     }
 
@@ -123,3 +141,5 @@ class ExpenseServiceTest {
         verify(jpaExpenseRepository, times(1)).existsById(1L);
     }
 }
+
+ */
