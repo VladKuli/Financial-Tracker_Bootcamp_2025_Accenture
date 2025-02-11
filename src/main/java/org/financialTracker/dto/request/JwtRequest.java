@@ -1,4 +1,4 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

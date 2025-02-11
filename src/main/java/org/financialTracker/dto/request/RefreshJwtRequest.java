@@ -1,4 +1,4 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
