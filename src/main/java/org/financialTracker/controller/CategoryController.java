@@ -2,8 +2,6 @@ package org.financialTracker.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.financialTracker.dto.response.CategoryResponseDTO;
-import org.financialTracker.dto.request.CreateCategoryDTO;
-import org.financialTracker.model.Category;
 import org.financialTracker.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

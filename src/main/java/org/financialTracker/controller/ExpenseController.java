@@ -27,12 +27,12 @@ public class ExpenseController {
     // GET endpoint to retrieve all USER expenses
     @GetMapping("/all")
     public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
-            @RequestParam(required = false) BigDecimal amount,  // Optional filter by amount
-            @RequestParam(required = false) Date date,  // Optional filter by date
-            @RequestParam(required = false) String categoryTitle
+//            @RequestParam(required = false) BigDecimal amount,  // Optional filter by amount
+//            @RequestParam(required = false) Date date,  // Optional filter by date
+//            @RequestParam(required = false) String categoryTitle
     ) throws AuthException {  // Optional filter by category
         // Get filtered expenses based on request parameters
-        return ResponseEntity.ok(expenseService.getExpensesByUser(amount, date, categoryTitle));
+        return ResponseEntity.ok(expenseService.getExpensesByUser());
     }
 
     @GetMapping("/monthly")
