@@ -30,6 +30,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
+    //refresh all tokens
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         String token = JwtUtil.getTokenFromRequest(request);
@@ -44,6 +45,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.registerUser(createUserDTO));
     }
 
+    //refresh only access token
     @PostMapping("/token")
     public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) throws AuthException {
         final JwtResponse token = authService.getAccessToken(request.getRefreshToken());
