@@ -1,8 +1,7 @@
-package org.financialTracker.dto;
+package org.financialTracker.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
