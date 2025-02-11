@@ -19,16 +19,15 @@ public class CategoryService {
     private final JpaCategoryRepository jpaCategoryRepository;
     private final JpaExpenseRepository jpaExpenseRepository;
 
-    public List<CategoryResponseDTO> getCategoriesByFilter(String title) {
+    public List<CategoryResponseDTO> getCategoriesByTitle(String title) {
         // Get filtered categories based on request parameters
         List<Category> categories = jpaCategoryRepository.findCategoriesByFilter(title);
         return CategoryMapper.toDTOList(categories);
     }
 
     public CategoryResponseDTO getCategoryById(Long id) {
-        Category category = jpaCategoryRepository.findById(id).orElseThrow(
-                () -> new CategoryNotFoundException("Category '" + id + "' not found")
-        );
+        Category category = jpaCategoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category '" + id + "' not found"));
 
         return CategoryMapper.toDTO(category);
     }
@@ -45,9 +44,8 @@ public class CategoryService {
     }
 
     public CategoryResponseDTO updateCategory(Long id, Category category) {
-        Category updatedCategory = jpaCategoryRepository.findById(id).orElseThrow(
-                () -> new CategoryNotFoundException("Category '" + id + "' not found")
-        );
+        Category updatedCategory = jpaCategoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category '" + id + "' not found"));
 
         updatedCategory.setTitle(category.getTitle());
         updatedCategory.setIcon(category.getIcon());

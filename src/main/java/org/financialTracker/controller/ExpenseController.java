@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,13 +26,13 @@ public class ExpenseController {
 
     // GET endpoint to retrieve all USER expenses
     @GetMapping("/all")
-    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses() throws AuthException
-//            @RequestParam(required = false) BigDecimal amount,  // Optional filter by amount
-//            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,  // Optional filter by date
-//            @RequestParam(required = false) String categoryTitle) throws AuthException {  // Optional filter by category
-    {
+    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
+            @RequestParam(required = false) BigDecimal amount,  // Optional filter by amount
+            @RequestParam(required = false) Date date,  // Optional filter by date
+            @RequestParam(required = false) String categoryTitle
+    ) throws AuthException {  // Optional filter by category
         // Get filtered expenses based on request parameters
-        return ResponseEntity.ok(expenseService.getExpensesByUser());
+        return ResponseEntity.ok(expenseService.getExpensesByUser(amount, date, categoryTitle));
     }
 
     @GetMapping("/monthly")

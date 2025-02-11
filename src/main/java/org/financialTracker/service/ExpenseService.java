@@ -31,7 +31,7 @@ public class ExpenseService {
     private final JpaUserRepository jpaUserRepository;
     private final JpaCategoryRepository jpaCategoryRepository;
 
-    public List<ExpenseResponseDTO> getExpensesByUser() throws AuthException {
+    public List<ExpenseResponseDTO> getExpensesByUser(BigDecimal amount, Date date, String categoryTitle) throws AuthException {
         UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
         return ExpenseMapper.toDTOList(jpaExpenseRepository.findByUser_Username(currentUser.getUsername()));
