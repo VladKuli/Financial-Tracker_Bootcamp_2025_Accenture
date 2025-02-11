@@ -99,7 +99,7 @@ public class AuthService {
 
         // Extract claims from the refresh token
         Claims claims = jwtTokenProvider.getRefreshClaims(refreshToken);
-        String username = claims.get("username", String.class);
+        String username = claims.get("sub", String.class);
 
         // Check if the refresh token exists in storage
         String storedRefreshToken = refreshStorage.get(username);

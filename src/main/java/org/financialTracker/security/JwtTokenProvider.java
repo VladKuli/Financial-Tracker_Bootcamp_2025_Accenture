@@ -69,7 +69,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .expiration(refreshExpiration)
-                .signWith(jwtAccessSecret)
+                .signWith(jwtRefreshSecret)
                 .compact();
     }
 
@@ -84,6 +84,7 @@ public class JwtTokenProvider {
      * Validation of refresh token
      */
     public boolean validateRefreshToken(@NonNull String token) {
+
         return validateToken(token, jwtRefreshSecret);
     }
 
@@ -91,6 +92,7 @@ public class JwtTokenProvider {
      * General logic for token verification
      */
     private boolean validateToken(@NonNull String token, @NonNull SecretKey key) {
+
         try {
             Jwts.parser()
                     .verifyWith(key)
