@@ -1,8 +1,10 @@
 package org.financialTracker.service;
+
 import org.financialTracker.client.OpenAIClient;
 import org.financialTracker.repository.JpaExpenseRepository;
 import org.financialTracker.response.OpenAIResponse;
 import org.financialTracker.util.FinancialPromptConstants;
+import org.financialTracker.exception.FinancialAdviceException;  // import the new exception
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ public class OpenAIService {
 
     public String generateFinancialAdvice(String category, double amount) {
         if (!isValidInput(category, amount)) {
-            return new OpenAIResponse("Invalid input: Please provide a valid category and a positive expense amount.").getMessage();
+            throw new FinancialAdviceException("Invalid input: Please provide a valid category and a positive expense amount.");
         }
 
         String prompt = String.format(FinancialPromptConstants.SPENDING_ADVICE_PROMPT, amount, category);
@@ -29,8 +31,7 @@ public class OpenAIService {
             return openAIClient.getResponseFromOpenAI(prompt);
         } catch (Exception e) {
             LOGGER.error("Error generating financial advice", e);
-            return new OpenAIResponse("An error occurred while generating financial advice. Please try again later.")
-                    .getMessage();
+            throw new FinancialAdviceException("An error occurred while generating financial advice. Please try again later.", e);
         }
     }
 
