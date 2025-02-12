@@ -37,5 +37,5 @@ jobs:
           envs: GITHUB_USERNAME, GITHUB_TOKEN
           script: |
             docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
-            docker pull ghcr.io/VladKuli/Financial-Tracker_Bootcamp_2025_Accenture/tracker-api:latest
+            docker pull ghcr.io/vladkuli/financial-tracker_bootcamp_2025_accenture/tracker-api:latest
             docker run -d -t -i  -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e OPENAI_KEY=${{ secrets.OPENAI_KEY }} -e OPENAI_URL=${{ secrets.OPENAI_URL }} -e SECRET_ACCESS=${{ secrets.SECRET_ACCESS }} -e SECRET_REFRESH=${{ secrets.SECRET_REFRESH }} -p 80:80 --name financial_tracker ghcr.io/VladKuli/Financial-Tracker_Bootcamp_2025_Accenture/tracker-api:latest
