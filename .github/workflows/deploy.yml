@@ -15,7 +15,7 @@ jobs:
       - name: Publish to Github Packages Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: VladKuli/Financial-Tracker_Bootcamp_2025_Accenture/tracker-api
+          name: ghcr.io/VladKuli/Financial-Tracker_Bootcamp_2025_Accenture/tracker-api
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
