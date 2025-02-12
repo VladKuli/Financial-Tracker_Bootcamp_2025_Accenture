@@ -15,6 +15,6 @@ public class UserResponseDTO {
     private String surname;
     private String email;
     private String role;
-    private List<ExpenseResponseDTO> expenses;
+    private List<TransactionResponseDTO> transactions;
 }
 

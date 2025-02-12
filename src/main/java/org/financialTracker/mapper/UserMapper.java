@@ -1,7 +1,7 @@
 package org.financialTracker.mapper;
 
 import org.financialTracker.dto.response.UserResponseDTO;
-import org.financialTracker.dto.response.ExpenseResponseDTO;
+import org.financialTracker.dto.response.TransactionResponseDTO;
 import org.financialTracker.model.User;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +17,11 @@ public class UserMapper {
             return null;
         }
 
-        // Convert List<Expense> to List<ExpenseDTO>
-        List<ExpenseResponseDTO> expenseDTOs = user.getExpenses() != null
-                ? user.getExpenses()
+        // Convert List<Transaction> to List<TransactionDTO>
+        List<TransactionResponseDTO> transactionDTOs = user.getExpens() != null
+                ? user.getExpens()
                 .stream()
-                .map(ExpenseMapper::toDTO).collect(Collectors.toList())
+                .map(TransactionMapper::toDTO).collect(Collectors.toList())
                 : null;
 
         return new UserResponseDTO(
@@ -31,7 +31,7 @@ public class UserMapper {
                 user.getSurname(),
                 user.getEmail(),
                 user.getRole().toString(),
-                expenseDTOs
+                transactionDTOs
         );
     }
 

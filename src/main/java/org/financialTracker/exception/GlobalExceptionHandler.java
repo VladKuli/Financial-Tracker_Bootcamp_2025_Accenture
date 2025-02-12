@@ -17,8 +17,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ExpenseNotFoundException.class)
-    public ResponseEntity<String> handleExpenseNotFoundException(ExpenseNotFoundException ex) {
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<String> handleTransactionNotFoundException(TransactionNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

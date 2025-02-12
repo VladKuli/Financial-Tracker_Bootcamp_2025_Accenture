@@ -1,4 +1,4 @@
-# 🌟 Financial Tracker - Real-Time AI-Powered Expense Management  
+# 🌟 Financial Tracker - Real-Time AI-Powered Transaction Management  
 
 ![Financial Tracker](https://img.shields.io/badge/Spring%20Boot-%2334D399?style=for-the-badge&logo=spring&logoColor=white)  
 ![React.js](https://img.shields.io/badge/React.js-%2361DAFB?style=for-the-badge&logo=react&logoColor=black)  
@@ -8,13 +8,13 @@
 ![JWT](https://img.shields.io/badge/JWT-%2334D399?style=for-the-badge&logo=jwt&logoColor=white)  
 ![Swagger](https://img.shields.io/badge/Swagger-%2398C0F8?style=for-the-badge&logo=swagger&logoColor=black)
 
-🚀 **Financial Tracker** is a web application that helps users **track, analyze, and optimize** their financial expenses in **real-time**. With **AI-powered financial insights**, **multi-currency support**, and **real-time transaction updates**, users can make **smarter financial decisions** with ease!  
+🚀 **Financial Tracker** is a web application that helps users **track, analyze, and optimize** their financial expens in **real-time**. With **AI-powered financial insights**, **multi-currency support**, and **real-time transaction updates**, users can make **smarter financial decisions** with ease!  
 
 ---
 
 ## 📌 Features  
 
-✅ **Expense & Income Tracking** – Log transactions across multiple categories.  
+✅ **Transaction & Income Tracking** – Log transactions across multiple categories.  
 ✅ **Real-Time Updates** – Transactions sync instantly using WebSocket.  
 ✅ **AI-Powered Financial Insights** – Get personalized savings recommendations.  
 ✅ **Multi-Currency Support** – Track finances in different currencies with live exchange rates.  

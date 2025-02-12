@@ -29,7 +29,7 @@ public class User implements UserDetails{
     // USER/ADMIN
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Expense> expenses;
+    private List<Transaction> expens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

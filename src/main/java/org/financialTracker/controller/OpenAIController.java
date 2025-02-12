@@ -19,9 +19,9 @@ public class OpenAIController {
     private OpenAIService aiService;
 
     @PostMapping
-    public ResponseEntity<String> processExpenseAnalysis(@RequestBody AdviceRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<String> processTransactionAnalysis(@RequestBody AdviceRequest request, HttpServletRequest httpRequest) {
         LOGGER.info("Headers: {}", httpRequest.getHeader("Content-Type"));
-        LOGGER.info("Received expense analysis request: category={}, amount={}", request.getCategory(), request.getAmount());
+        LOGGER.info("Received transaction analysis request: category={}, amount={}", request.getCategory(), request.getAmount());
 
         String advice = aiService.generateFinancialAdvice(request.getCategory(), request.getAmount());
 

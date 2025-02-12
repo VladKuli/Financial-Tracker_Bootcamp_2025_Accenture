@@ -6,9 +6,9 @@ import org.financialTracker.dto.request.CreateCategoryDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
 import org.financialTracker.mapper.CategoryMapper;
 import org.financialTracker.model.Category;
-import org.financialTracker.model.Expense;
+import org.financialTracker.model.Transaction;
 import org.financialTracker.repository.JpaCategoryRepository;
-import org.financialTracker.repository.JpaExpenseRepository;
+import org.financialTracker.repository.JpaTransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final JpaCategoryRepository jpaCategoryRepository;
-    private final JpaExpenseRepository jpaExpenseRepository;
+    private final JpaTransactionRepository jpaTransactionRepository;
 
     public List<CategoryResponseDTO> getCategoriesByTitle(String title) {
         // Get filtered categories based on request parameters
@@ -60,11 +60,11 @@ public class CategoryService {
             throw new CategoryNotFoundException("Category '" + id + "' not found");
         }
 
-        List<Expense> expenses = jpaExpenseRepository.findByCategoryId(id);
+        List<Transaction> expens = jpaTransactionRepository.findByCategoryId(id);
 
-        for (Expense expense : expenses) {
-            expense.setCategory(null);
-            jpaExpenseRepository.save(expense);
+        for (Transaction transaction : expens) {
+            transaction.setCategory(null);
+            jpaTransactionRepository.save(transaction);
         }
 
         jpaCategoryRepository.deleteById(id);

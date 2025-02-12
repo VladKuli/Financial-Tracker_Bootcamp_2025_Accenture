@@ -1,7 +1,7 @@
 package org.financialTracker.service;
 
 import org.financialTracker.client.OpenAIClient;
-import org.financialTracker.repository.JpaExpenseRepository;
+import org.financialTracker.repository.JpaTransactionRepository;
 import org.financialTracker.response.OpenAIResponse;
 import org.financialTracker.util.FinancialPromptConstants;
 import org.financialTracker.exception.FinancialAdviceException;  // import the new exception
@@ -18,11 +18,11 @@ public class OpenAIService {
     @Autowired
     private OpenAIClient openAIClient;
     @Autowired
-    private JpaExpenseRepository repository;
+    private JpaTransactionRepository repository;
 
     public String generateFinancialAdvice(String category, double amount) {
         if (!isValidInput(category, amount)) {
-            throw new FinancialAdviceException("Invalid input: Please provide a valid category and a positive expense amount.");
+            throw new FinancialAdviceException("Invalid input: Please provide a valid category and a positive transaction amount.");
         }
 
         String prompt = String.format(FinancialPromptConstants.SPENDING_ADVICE_PROMPT, amount, category);

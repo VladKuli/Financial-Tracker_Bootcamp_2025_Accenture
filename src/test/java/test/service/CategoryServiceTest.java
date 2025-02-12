@@ -38,7 +38,7 @@ class CategoryServiceTest {
         category.setId(1L);
         category.setTitle("Food");
         category.setIcon("icon.png");
-        category.setDescription("Food expenses");
+        category.setDescription("Food transactions");
 
         categoryDTO = CategoryMapper.toDTO(category);
     }

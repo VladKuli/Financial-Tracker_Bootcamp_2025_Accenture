@@ -8,9 +8,9 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Table(name = "expenses")
+@Table(name = "transactions")
 @Entity
-public class Expense {
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,12 +24,13 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    private TransactionType transactionType;
 
     @PreRemove
     public void preRemove() {
         if (user != null) {
-            // This will ensure that the 'Expense' is removed from the 'User' collection
-            user.getExpenses().remove(this);  // Adjust this based on the actual relationship.
+            // This will ensure that the 'Transaction' is removed from the 'User' collection
+            user.getExpens().remove(this);  // Adjust this based on the actual relationship.
             this.user = null;  // Nullify the back-reference to avoid unexpected behavior.
         }
     }

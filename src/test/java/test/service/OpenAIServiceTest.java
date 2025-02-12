@@ -1,7 +1,7 @@
 package test.service;
 
 import org.financialTracker.client.OpenAIClient;
-import org.financialTracker.repository.JpaExpenseRepository;
+import org.financialTracker.repository.JpaTransactionRepository;
 import org.financialTracker.service.OpenAIService;
 import org.financialTracker.util.FinancialPromptConstants;
 
@@ -21,7 +21,7 @@ class OpenAIServiceTest {
     private OpenAIClient openAIClient;
 
     @Mock
-    private JpaExpenseRepository repository;
+    private JpaTransactionRepository repository;
 
     @InjectMocks
     private OpenAIService openAIService;
@@ -46,7 +46,7 @@ class OpenAIServiceTest {
     void testGenerateFinancialAdvice_InvalidInput_NegativeAmount() {
         String response = openAIService.generateFinancialAdvice("Food", -10.0);
 
-        assertEquals("Invalid input: Please provide a valid category and a positive expense amount.", response);
+        assertEquals("Invalid input: Please provide a valid category and a positive transaction amount.", response);
         verify(openAIClient, never()).getResponseFromOpenAI(anyString());
     }
 
@@ -54,7 +54,7 @@ class OpenAIServiceTest {
     void testGenerateFinancialAdvice_InvalidInput_EmptyCategory() {
         String response = openAIService.generateFinancialAdvice("", 20.0);
 
-        assertEquals("Invalid input: Please provide a valid category and a positive expense amount.", response);
+        assertEquals("Invalid input: Please provide a valid category and a positive transaction amount.", response);
         verify(openAIClient, never()).getResponseFromOpenAI(anyString());
     }
 
