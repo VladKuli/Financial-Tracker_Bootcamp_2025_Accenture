@@ -7,10 +7,12 @@ import org.financialTracker.dto.response.TransactionResponseDTO;
 import org.financialTracker.dto.request.CreateTransactionDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
+import org.financialTracker.exception.InvalidDataException;
 import org.financialTracker.exception.TransactionNotFoundException;
 import org.financialTracker.exception.UserNotFoundException;
 import org.financialTracker.mapper.TransactionMapper;
 import org.financialTracker.model.Transaction;
+import org.financialTracker.model.TransactionType;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaTransactionRepository;
 import org.financialTracker.repository.JpaUserRepository;
@@ -48,6 +50,22 @@ public class TransactionService {
         return TransactionMapper.toDTO(transaction);
     }
 
+    public List<TransactionResponseDTO> getExpensesByUser() throws AuthException {
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
+
+        List<Transaction> expenses = jpaTransactionRepository.findExpenses(currentUser.getId());
+
+        return TransactionMapper.toDTOList(expenses);
+    }
+
+    public List<TransactionResponseDTO> getIncomesByUser() throws AuthException {
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
+
+        List<Transaction> expenses = jpaTransactionRepository.findIncomes(currentUser.getId());
+
+        return TransactionMapper.toDTOList(expenses);
+    }
+
     public List<TransactionResponseDTO> getMonthlyTransactions() throws AuthException {
         UserResponseDTO currentUser = authService.getAuthenticatedUser();
         LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
@@ -59,8 +77,19 @@ public class TransactionService {
         return TransactionMapper.toDTOList(jpaTransactionRepository.findTransactionsForCurrentMonth(currentUser.getUsername(), startDate, endDate));
     }
 
-    public BigDecimal getTotalMonthlyTransactions() throws AuthException {
-        return getMonthlyTransactions().stream()
+    public List<TransactionResponseDTO> getMonthlyExpenses() throws AuthException {
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
+        LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
+        LocalDate endDateLocal = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+
+        Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        return TransactionMapper.toDTOList(jpaTransactionRepository.findExpensesForCurrentMonth(currentUser.getUsername(), startDate, endDate));
+    }
+
+    public BigDecimal getTotalMonthlyExpenses() throws AuthException {
+        return getMonthlyExpenses().stream()
                 .map(TransactionResponseDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -68,7 +97,14 @@ public class TransactionService {
     public TransactionResponseDTO createTransaction(CreateTransactionDTO createTransactionDTO) throws AuthException {
         UserResponseDTO currentUser = authService.getAuthenticatedUser();
 
+        if (createTransactionDTO.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidDataException("Amount should be greater than zero.");
+        }
+
         Transaction newTransaction = new Transaction();
+        if (createTransactionDTO.getTransactionType() == TransactionType.EXPENSE) {
+            createTransactionDTO.setAmount(createTransactionDTO.getAmount().multiply(BigDecimal.valueOf(-1)));
+        }
         newTransaction.setAmount(createTransactionDTO.getAmount());
         newTransaction.setDescription(createTransactionDTO.getDescription());
         newTransaction.setCategory(
@@ -80,6 +116,11 @@ public class TransactionService {
         newTransaction.setUser(jpaUserRepository.findByUsername(currentUser.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User not found")
         ));
+
+        if (createTransactionDTO.getTransactionType() == null) {
+            throw new InvalidDataException("Transaction type must be specified.");
+        }
+
         newTransaction.setTransactionType(createTransactionDTO.getTransactionType());
         jpaTransactionRepository.save(newTransaction);
 

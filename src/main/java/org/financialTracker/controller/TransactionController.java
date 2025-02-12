@@ -32,21 +32,36 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionsByUser());
     }
 
-    @GetMapping("/monthly")
-    public ResponseEntity<List<TransactionResponseDTO>> getMonthlyTransactions() throws AuthException {
-        return ResponseEntity.ok(transactionService.getMonthlyTransactions());
-    }
-
-    @GetMapping("/monthly/total")
-    public ResponseEntity<String> getTotalMonthlyTransactions() throws AuthException {
-        return ResponseEntity.ok("Total: " + transactionService.getTotalMonthlyTransactions());
-    }
-
     // GET endpoint to retrieve a specific USER transaction by its ID
     @GetMapping("/{id}")
     public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable Long id) throws AuthException {
         return ResponseEntity.ok(transactionService.getTransactionsByIdAndUser(id));
 
+    }
+
+    @GetMapping("/expenses")
+    public ResponseEntity<List<TransactionResponseDTO>> getExpenses() throws AuthException {
+        return ResponseEntity.ok(transactionService.getExpensesByUser());
+    }
+
+    @GetMapping("/incomes")
+    public ResponseEntity<List<TransactionResponseDTO>> getIncomes() throws AuthException {
+        return ResponseEntity.ok(transactionService.getIncomesByUser());
+    }
+
+    @GetMapping("/monthly")
+    public ResponseEntity<List<TransactionResponseDTO>> getMonthlyTransactions() throws AuthException {
+        return ResponseEntity.ok(transactionService.getMonthlyTransactions());
+    }
+
+    @GetMapping("/expenses/monthly")
+    public ResponseEntity<List<TransactionResponseDTO>> getMonthlyExpenses() throws AuthException {
+        return ResponseEntity.ok(transactionService.getMonthlyExpenses());
+    }
+
+    @GetMapping("/expenses/monthly/total")
+    public ResponseEntity<String> getTotalMonthlyExpenses() throws AuthException {
+        return ResponseEntity.ok("Total: " + transactionService.getTotalMonthlyExpenses());
     }
 
     // POST endpoint to create/add a new transaction

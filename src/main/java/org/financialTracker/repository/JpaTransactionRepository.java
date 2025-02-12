@@ -1,6 +1,8 @@
 package org.financialTracker.repository;
 
+import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.model.Transaction;
+import org.financialTracker.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,8 +21,17 @@ public interface JpaTransactionRepository extends JpaRepository<Transaction, Lon
 
     Optional<Transaction> findTransactionByIdAndUser_Username(Long id, String username);
 
-    @Query("SELECT e FROM Transaction e WHERE e.date BETWEEN :startDate AND :endDate AND e.user.username = :username")
+    @Query("SELECT e FROM Transaction e WHERE e.transactionType = 1 AND e.user.id = :userId")
+    List<Transaction> findExpenses(Long userId);
+
+    @Query("SELECT e FROM Transaction e WHERE e.transactionType = 0 AND e.user.id = :userId")
+    List<Transaction> findIncomes(Long userId);
+
+    @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.user.username = :username")
     List<Transaction> findTransactionsForCurrentMonth(String username, Date startDate, Date endDate);
+
+    @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.transactionType = 1 AND t.user.username = :username")
+    List<Transaction> findExpensesForCurrentMonth(String username, Date startDate, Date endDate);
 
     List<Transaction> findByCategoryId(Long id);
 
