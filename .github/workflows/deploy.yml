@@ -1,0 +1,42 @@
+name: financial-tracker deploy
+
+on:
+  push:
+    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Publish to Github Packages Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ghcr.io/VladKuli/Financial-Tracker_Bootcamp_2025_Accenture/tracker-api
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: Dockerfile
+          tags: latest
+      - name: Deploy package to EC2
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: ${{ secrets.DO_PORT }}
+          envs: GITHUB_USERNAME, GITHUB_TOKEN
+          script: |
+            docker rm /financial_tracker
+            docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
+            docker pull ghcr.io/vladkuli/financial-tracker_bootcamp_2025_accenture/tracker-api:latest
+            docker run -d -t -i  -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e OPENAI_KEY=${{ secrets.OPENAI_KEY }} -e OPENAI_URL=${{ secrets.OPENAI_URL }} -e SECRET_ACCESS=${{ secrets.SECRET_ACCESS }} -e SECRET_REFRESH=${{ secrets.SECRET_REFRESH }} -p 80:80 --name financial_tracker ghcr.io/vladkuli/financial-tracker_bootcamp_2025_accenture/tracker-api:latest
