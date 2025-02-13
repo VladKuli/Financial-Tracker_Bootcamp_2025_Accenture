@@ -17,6 +17,7 @@ public class Transaction {
     @Column(nullable = false)
     private BigDecimal amount;
     private Date date = new Date();
+    @Column(length = 120)
     private String description;
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -30,7 +31,7 @@ public class Transaction {
     public void preRemove() {
         if (user != null) {
             // This will ensure that the 'Transaction' is removed from the 'User' collection
-            user.getExpens().remove(this);  // Adjust this based on the actual relationship.
+            user.getTransactions().remove(this);  // Adjust this based on the actual relationship.
             this.user = null;  // Nullify the back-reference to avoid unexpected behavior.
         }
     }

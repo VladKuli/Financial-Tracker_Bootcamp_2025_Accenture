@@ -18,8 +18,8 @@ public class UserMapper {
         }
 
         // Convert List<Transaction> to List<TransactionDTO>
-        List<TransactionResponseDTO> transactionDTOs = user.getExpens() != null
-                ? user.getExpens()
+        List<TransactionResponseDTO> transactionDTOs = user.getTransactions() != null
+                ? user.getTransactions()
                 .stream()
                 .map(TransactionMapper::toDTO).collect(Collectors.toList())
                 : null;

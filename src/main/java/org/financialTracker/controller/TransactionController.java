@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -39,6 +40,11 @@ public class TransactionController {
 
     }
 
+    @GetMapping("/monthly")
+    public ResponseEntity<List<TransactionResponseDTO>> getMonthlyTransactions() throws AuthException {
+        return ResponseEntity.ok(transactionService.getMonthlyTransactions());
+    }
+
     @GetMapping("/expenses")
     public ResponseEntity<List<TransactionResponseDTO>> getExpenses() throws AuthException {
         return ResponseEntity.ok(transactionService.getExpensesByUser());
@@ -49,9 +55,9 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getIncomesByUser());
     }
 
-    @GetMapping("/monthly")
-    public ResponseEntity<List<TransactionResponseDTO>> getMonthlyTransactions() throws AuthException {
-        return ResponseEntity.ok(transactionService.getMonthlyTransactions());
+    @GetMapping("/incomes/monthly/total")
+    public ResponseEntity<BigDecimal> getTotalIncomes() throws AuthException {
+        return ResponseEntity.ok(transactionService.getTotalMonthlyIncomes());
     }
 
     @GetMapping("/expenses/monthly")
@@ -60,8 +66,8 @@ public class TransactionController {
     }
 
     @GetMapping("/expenses/monthly/total")
-    public ResponseEntity<String> getTotalMonthlyExpenses() throws AuthException {
-        return ResponseEntity.ok("Total: " + transactionService.getTotalMonthlyExpenses());
+    public ResponseEntity<BigDecimal> getTotalMonthlyExpenses() throws AuthException {
+        return ResponseEntity.ok(transactionService.getTotalMonthlyExpenses());
     }
 
     // POST endpoint to create/add a new transaction
