@@ -30,6 +30,9 @@ public interface JpaTransactionRepository extends JpaRepository<Transaction, Lon
     @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.user.username = :username")
     List<Transaction> findTransactionsForCurrentMonth(String username, Date startDate, Date endDate);
 
+    @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.transactionType = 0 AND t.user.username = :username")
+    List<Transaction> findIncomesForCurrentMonth(String username, Date startDate, Date endDate);
+
     @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.transactionType = 1 AND t.user.username = :username")
     List<Transaction> findExpensesForCurrentMonth(String username, Date startDate, Date endDate);
 

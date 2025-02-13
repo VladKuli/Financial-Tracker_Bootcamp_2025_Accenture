@@ -16,6 +16,7 @@ import org.financialTracker.model.TransactionType;
 import org.financialTracker.repository.JpaCategoryRepository;
 import org.financialTracker.repository.JpaTransactionRepository;
 import org.financialTracker.repository.JpaUserRepository;
+import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -66,7 +67,8 @@ public class TransactionService {
         return TransactionMapper.toDTOList(expenses);
     }
 
-    public List<TransactionResponseDTO> getMonthlyTransactions() throws AuthException {
+    // Helper method for fetching transactions
+    private List<TransactionResponseDTO> getTransactionsForCurrentMonth(TransactionFinder transactionFinder) throws AuthException {
         UserResponseDTO currentUser = authService.getAuthenticatedUser();
         LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
         LocalDate endDateLocal = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
@@ -74,18 +76,30 @@ public class TransactionService {
         Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return TransactionMapper.toDTOList(jpaTransactionRepository.findTransactionsForCurrentMonth(currentUser.getUsername(), startDate, endDate));
+        return TransactionMapper.toDTOList(transactionFinder.find(currentUser.getUsername(), startDate, endDate));
+    }
+
+    public List<TransactionResponseDTO> getMonthlyTransactions() throws AuthException {
+        return getTransactionsForCurrentMonth(jpaTransactionRepository::findTransactionsForCurrentMonth);
+    }
+
+    public List<TransactionResponseDTO> getMonthlyIncomes() throws AuthException {
+        return getTransactionsForCurrentMonth(jpaTransactionRepository::findIncomesForCurrentMonth);
     }
 
     public List<TransactionResponseDTO> getMonthlyExpenses() throws AuthException {
-        UserResponseDTO currentUser = authService.getAuthenticatedUser();
-        LocalDate startDateLocal = LocalDate.now().withDayOfMonth(1);
-        LocalDate endDateLocal = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
+        return getTransactionsForCurrentMonth(jpaTransactionRepository::findExpensesForCurrentMonth);
+    }
 
-        Date startDate = Date.from(startDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date endDate = Date.from(endDateLocal.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    @FunctionalInterface
+    interface TransactionFinder {
+        List<Transaction> find(String username, Date startDate, Date endDate);
+    }
 
-        return TransactionMapper.toDTOList(jpaTransactionRepository.findExpensesForCurrentMonth(currentUser.getUsername(), startDate, endDate));
+    public BigDecimal getTotalMonthlyIncomes() throws AuthException {
+        return getMonthlyIncomes().stream()
+                .map(TransactionResponseDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public BigDecimal getTotalMonthlyExpenses() throws AuthException {
