@@ -36,6 +36,7 @@ jobs:
           port: ${{ secrets.DO_PORT }}
           envs: GITHUB_USERNAME, GITHUB_TOKEN
           script: |
+            docker stop /financial_tracker
             docker rm /financial_tracker
             docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
             docker pull ghcr.io/vladkuli/financial-tracker_bootcamp_2025_accenture/tracker-api:latest
