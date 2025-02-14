@@ -42,3 +42,9 @@
 - **AWS** – Cloud hosting.  
 
 ---
+
+# 🌟 Frontend GitHub Repository
+
+[Financial Tracker Frontend - GitHub](https://github.com/aliva2/Financial-Tracker-Frontend)
+
+---
