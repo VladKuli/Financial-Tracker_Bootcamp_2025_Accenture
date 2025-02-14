@@ -14,8 +14,7 @@
 
 ## 📌 Features  
 
-✅ **Transaction & Income Tracking** – Log transactions across multiple categories.  
-✅ **Real-Time Updates** – Transactions sync instantly using WebSocket.  
+✅ **Transaction & Income Tracking** – Log transactions across multiple categories.   
 ✅ **AI-Powered Financial Insights** – Get personalized savings recommendations.  
 ✅ **Multi-Currency Support** – Track finances in different currencies with live exchange rates.  
 ✅ **Data Visualization** – Interactive charts and graphs for spending analysis.  
@@ -26,8 +25,7 @@
 ## 🏗️ Tech Stack  
 
 ### 🔹 Backend (Spring Boot)  
-- **Spring Boot** – Core backend framework.  
-- **Spring WebSocket** – Real-time transaction updates.  
+- **Spring Boot** – Core backend framework.   
 - **Spring Security + JWT** – Secure authentication.  
 - **Spring Data JPA** – Database interactions.  
 - **PostgreSQL / MySQL** – Relational database.  
@@ -37,11 +35,10 @@
 - **React.js** – Single Page Application framework.  
 - **Material UI / Tailwind CSS** – Modern UI design.  
 - **Chart.js / Recharts** – Data visualization.  
-- **WebSocket API** – Live transaction updates.  
 
 ### 🔹 DevOps & Deployment  
 - **Docker + Docker Compose** – Containerized deployment.  
-- **GitHub Actions / Jenkins** – CI/CD automation.  
+- **GitHub Actions** – CI/CD automation.  
 - **AWS** – Cloud hosting.  
 
 ---
