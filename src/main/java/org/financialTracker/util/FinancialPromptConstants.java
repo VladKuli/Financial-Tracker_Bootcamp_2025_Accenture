@@ -1,5 +1,8 @@
 package org.financialTracker.util;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FinancialPromptConstants {
 
     public static final String SPENDING_ADVICE_PROMPT =

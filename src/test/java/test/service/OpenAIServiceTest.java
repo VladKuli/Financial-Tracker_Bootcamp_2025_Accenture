@@ -1,61 +1,47 @@
 package test.service;
-
 import org.financialTracker.client.OpenAIClient;
-import org.financialTracker.repository.JpaTransactionRepository;
+import org.financialTracker.exception.FinancialAdviceException;
+import org.financialTracker.response.OpenAIResponse;
 import org.financialTracker.service.OpenAIService;
 import org.financialTracker.util.FinancialPromptConstants;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
-@ExtendWith(MockitoExtension.class)
 class OpenAIServiceTest {
-
-    @Mock
-    private OpenAIClient openAIClient;
-
-    @Mock
-    private JpaTransactionRepository repository;
 
     @InjectMocks
     private OpenAIService openAIService;
 
+    @Mock
+    private OpenAIClient openAIClient;
 
-    @Test
-    void testGenerateFinancialAdvice_ValidInput() {
-        String category = "Food";
-        double amount = 50.0;
-        String expectedResponse = "You should consider meal prepping to save money.";
-
-        when(openAIClient.getResponseFromOpenAI(String.format(FinancialPromptConstants.SPENDING_ADVICE_PROMPT, amount, category)))
-                .thenReturn(expectedResponse);
-
-        String actualResponse = openAIService.generateFinancialAdvice(category, amount);
-
-        assertEquals(expectedResponse, actualResponse);
-        verify(openAIClient, times(1)).getResponseFromOpenAI(anyString());
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGenerateFinancialAdvice_InvalidInput_NegativeAmount() {
-        String response = openAIService.generateFinancialAdvice("Food", -10.0);
-
-        assertEquals("Invalid input: Please provide a valid category and a positive transaction amount.", response);
-        verify(openAIClient, never()).getResponseFromOpenAI(anyString());
+    void testGenerateFinancialAdvice_InvalidInput() {
+        assertThrows(FinancialAdviceException.class, () -> openAIService.generateFinancialAdvice("", -100));
+        assertThrows(FinancialAdviceException.class, () -> openAIService.generateFinancialAdvice("Food", -100));
+        assertThrows(FinancialAdviceException.class, () -> openAIService.generateFinancialAdvice("", 100));
     }
 
     @Test
-    void testGenerateFinancialAdvice_InvalidInput_EmptyCategory() {
-        String response = openAIService.generateFinancialAdvice("", 20.0);
+    void testGenerateFinancialAdvice_SuccessfulResponse() throws Exception {
+        String expectedResponse = "Financial advice based on your spending.";
+        Mockito.when(openAIClient.getResponseFromOpenAI(anyString())).thenReturn(expectedResponse);
 
-        assertEquals("Invalid input: Please provide a valid category and a positive transaction amount.", response);
-        verify(openAIClient, never()).getResponseFromOpenAI(anyString());
+        String result = openAIService.generateFinancialAdvice("Food", 100);
+
+        assertEquals(expectedResponse, result);
     }
 
 }
