@@ -121,12 +121,16 @@ public class TransactionService {
         }
         newTransaction.setAmount(createTransactionDTO.getAmount());
         newTransaction.setDescription(createTransactionDTO.getDescription());
-        newTransaction.setCategory(
-                jpaCategoryRepository.findById(createTransactionDTO.getCategoryId())
-                        .orElseThrow(
-                                () -> new CategoryNotFoundException("Category with ID '" + createTransactionDTO.getCategoryId() + "' not found")
-                        )
-        );
+        if (createTransactionDTO.getTransactionType() == TransactionType.EXPENSE) {
+            newTransaction.setCategory(
+                    jpaCategoryRepository.findById(createTransactionDTO.getCategoryId())
+                            .orElseThrow(
+                                    () -> new CategoryNotFoundException("Category with ID '" + createTransactionDTO.getCategoryId() + "' not found")
+                            )
+            );
+        } else {
+            newTransaction.setCategory(null);
+        }
         newTransaction.setUser(jpaUserRepository.findByUsername(currentUser.getUsername()).orElseThrow(
                 () -> new UserNotFoundException("User not found")
         ));
