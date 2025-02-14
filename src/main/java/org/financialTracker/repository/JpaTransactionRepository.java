@@ -1,5 +1,6 @@
 package org.financialTracker.repository;
 
+import org.financialTracker.dto.request.AdviceRequest;
 import org.financialTracker.dto.response.UserResponseDTO;
 import org.financialTracker.model.Transaction;
 import org.financialTracker.model.User;
@@ -35,6 +36,9 @@ public interface JpaTransactionRepository extends JpaRepository<Transaction, Lon
 
     @Query("SELECT t FROM Transaction t WHERE t.date BETWEEN :startDate AND :endDate AND t.transactionType = 1 AND t.user.username = :username")
     List<Transaction> findExpensesForCurrentMonth(String username, Date startDate, Date endDate);
+
+    @Query("SELECT t.category.title, SUM(t.amount * -1) FROM Transaction t WHERE t.transactionType = 1 AND t.user.id = :userId GROUP BY t.category")
+    List<Object[]> getTotalAmountByCategory(Long userId);
 
     List<Transaction> findByCategoryId(Long id);
 

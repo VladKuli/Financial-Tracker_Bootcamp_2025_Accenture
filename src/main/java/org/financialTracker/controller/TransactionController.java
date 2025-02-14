@@ -1,8 +1,10 @@
 package org.financialTracker.controller;
 
 import jakarta.security.auth.message.AuthException;
+import org.financialTracker.dto.request.AdviceRequest;
 import org.financialTracker.dto.request.CreateTransactionDTO;
 import org.financialTracker.dto.request.UpdateTransactionDTO;
+import org.financialTracker.dto.response.CategoryExpenseDTO;
 import org.financialTracker.dto.response.TransactionResponseDTO;
 import org.financialTracker.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,11 @@ public class TransactionController {
     @GetMapping("/expenses/monthly/total")
     public ResponseEntity<BigDecimal> getTotalMonthlyExpenses() throws AuthException {
         return ResponseEntity.ok(transactionService.getTotalMonthlyExpenses());
+    }
+
+    @GetMapping("/total-category")
+    public ResponseEntity<List<CategoryExpenseDTO>> getTotalExpensesByCategory() throws AuthException {
+        return ResponseEntity.ok(transactionService.getTotalExpensesByCategory());
     }
 
     // POST endpoint to create/add a new transaction

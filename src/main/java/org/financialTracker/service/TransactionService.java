@@ -2,7 +2,9 @@ package org.financialTracker.service;
 
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import org.financialTracker.dto.request.AdviceRequest;
 import org.financialTracker.dto.request.UpdateTransactionDTO;
+import org.financialTracker.dto.response.CategoryExpenseDTO;
 import org.financialTracker.dto.response.TransactionResponseDTO;
 import org.financialTracker.dto.request.CreateTransactionDTO;
 import org.financialTracker.dto.response.UserResponseDTO;
@@ -25,6 +27,7 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -106,6 +109,15 @@ public class TransactionService {
         return getMonthlyExpenses().stream()
                 .map(TransactionResponseDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public List<CategoryExpenseDTO> getTotalExpensesByCategory() throws AuthException {
+//        return jpaTransactionRepository.getTotalAmountByCategory();
+        UserResponseDTO currentUser = authService.getAuthenticatedUser();
+        return jpaTransactionRepository.getTotalAmountByCategory(currentUser.getId())
+                .stream()
+                .map(result -> new CategoryExpenseDTO((String) result[0], new BigDecimal(result[1].toString())))
+                .collect(Collectors.toList());
     }
 
     public TransactionResponseDTO createTransaction(CreateTransactionDTO createTransactionDTO) throws AuthException {

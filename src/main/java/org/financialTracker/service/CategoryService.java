@@ -1,6 +1,7 @@
 package org.financialTracker.service;
 
 import lombok.RequiredArgsConstructor;
+import org.financialTracker.dto.request.AdviceRequest;
 import org.financialTracker.dto.response.CategoryResponseDTO;
 import org.financialTracker.dto.request.CreateCategoryDTO;
 import org.financialTracker.exception.CategoryNotFoundException;
