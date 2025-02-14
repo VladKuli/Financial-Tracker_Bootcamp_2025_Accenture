@@ -16,7 +16,7 @@ public class Transaction {
     private Long id;
     @Column(nullable = false)
     private BigDecimal amount;
-    private Date date = new Date();
+    private Date date;
     @Column(length = 120)
     private String description;
     @ManyToOne

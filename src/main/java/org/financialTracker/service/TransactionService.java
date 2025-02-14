@@ -120,6 +120,11 @@ public class TransactionService {
             createTransactionDTO.setAmount(createTransactionDTO.getAmount().multiply(BigDecimal.valueOf(-1)));
         }
         newTransaction.setAmount(createTransactionDTO.getAmount());
+        if (createTransactionDTO.getDate() != null) {
+            newTransaction.setDate(createTransactionDTO.getDate());
+        } else {
+            newTransaction.setDate(new Date());
+        }
         newTransaction.setDescription(createTransactionDTO.getDescription());
         if (createTransactionDTO.getTransactionType() == TransactionType.EXPENSE) {
             newTransaction.setCategory(
