@@ -16,7 +16,6 @@
 
 ✅ **Transaction & Income Tracking** – Log transactions across multiple categories.   
 ✅ **AI-Powered Financial Insights** – Get personalized savings recommendations.  
-✅ **Multi-Currency Support** – Track finances in different currencies with live exchange rates.  
 ✅ **Data Visualization** – Interactive charts and graphs for spending analysis.  
 ✅ **Secure Authentication** – Uses JWT and Spring Security for data privacy.  
 
@@ -28,12 +27,12 @@
 - **Spring Boot** – Core backend framework.   
 - **Spring Security + JWT** – Secure authentication.  
 - **Spring Data JPA** – Database interactions.  
-- **PostgreSQL / MySQL** – Relational database.  
+- **PostgreSQL** – Relational database.  
 - **OpenAI API** – AI-powered financial analysis.  
 
 ### 🔹 Frontend (React.js)  
 - **React.js** – Single Page Application framework.  
-- **Material UI / Tailwind CSS** – Modern UI design.  
+- **Material UI** – Modern UI design.  
 - **Chart.js / Recharts** – Data visualization.  
 
 ### 🔹 DevOps & Deployment  
